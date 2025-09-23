@@ -41,3 +41,21 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# 测试文件和临时配置
+test-*.js
+*-test-result.json
+check-*.js
+compare-*.js
+configure-*.js
+setup-*.js
+verify-*.md
+temp-*.js
+temp-*.json
+*.temp
+*.tmp
+
+# 开发调试文件
+debug-*.js
+debug-*.json
+*.debug
