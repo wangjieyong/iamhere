@@ -40,28 +40,7 @@ export default function SignIn() {
     }
   }
 
-  const handleDevSkip = async () => {
-    // For development only - skip authentication
-    if (true) {
-      setIsLoading(true)
-      try {
-        const result = await signIn("dev-skip", {
-          callbackUrl: "/create",
-          redirect: false,
-        })
-        
-        if (result?.ok) {
-          router.push("/create")
-        } else {
-          console.error("Dev skip failed:", result?.error)
-        }
-      } catch (error) {
-        console.error("Dev skip error:", error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-  }
+
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -116,27 +95,7 @@ export default function SignIn() {
             )}
           </Button>
 
-          {/* Development Skip Button - Only shown in development */}
-          {true && (
-            <Button
-              onClick={handleDevSkip}
-              disabled={isLoading}
-              className="w-full h-12 text-base"
-              variant="secondary"
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  <span>跳过中...</span>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <span>🚀</span>
-                  <span>开发模式 - 跳过登录</span>
-                </div>
-              )}
-            </Button>
-          )}
+
 
           {/* Note: Apple Sign In will be added when credentials are configured */}
           <div className="text-center text-sm text-muted-foreground">

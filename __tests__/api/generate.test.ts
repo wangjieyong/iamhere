@@ -86,48 +86,7 @@ describe('API Generate Route Logic Tests', () => {
     })
   })
 
-  describe('Demo Mode Logic', () => {
-    it('should detect when to use demo mode', () => {
-      const shouldUseDemoMode = (apiKey: string | undefined) => {
-        return !apiKey || apiKey === 'your-google-ai-api-key' || apiKey.length < 10
-      }
 
-      expect(shouldUseDemoMode(undefined)).toBe(true)
-      expect(shouldUseDemoMode('your-google-ai-api-key')).toBe(true)
-      expect(shouldUseDemoMode('short')).toBe(true)
-      expect(shouldUseDemoMode('valid-api-key-with-sufficient-length')).toBe(false)
-    })
-
-    it('should generate demo image data', () => {
-      const generateDemoImage = (location: any) => {
-        const demoImages = [
-          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
-          'https://images.unsplash.com/photo-1519904981063-b0cf448d479e',
-          'https://images.unsplash.com/photo-1506905925346-21bda4d32df4'
-        ]
-        
-        const randomImage = demoImages[Math.floor(Math.random() * demoImages.length)]
-        
-        return {
-          imageUrl: `${randomImage}?w=800&h=600&fit=crop`,
-          prompt: `演示模式：这是一个在${location.address}的示例图片。在真实环境中，这里会显示AI生成的图片。`,
-          location: location.address,
-          locationLat: location.lat,
-          locationLng: location.lng
-        }
-      }
-
-      const location = { lat: 40.7128, lng: -74.0060, address: 'New York' }
-      const result = generateDemoImage(location)
-
-      expect(result.imageUrl).toContain('unsplash.com')
-      expect(result.prompt).toContain('演示模式')
-      expect(result.prompt).toContain('New York')
-      expect(result.location).toBe('New York')
-      expect(result.locationLat).toBe(40.7128)
-      expect(result.locationLng).toBe(-74.0060)
-    })
-  })
 
   describe('Error Handling Logic', () => {
     it('should handle various error scenarios', () => {

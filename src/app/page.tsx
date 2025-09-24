@@ -44,12 +44,19 @@ export default function Home() {
             <Link href="/auth/signin">立即体验</Link>
           </Button>
           
-          {/* Demo Image Placeholder */}
+          {/* Feature Preview */}
           <div className="bg-secondary rounded-lg p-8 max-w-3xl mx-auto">
-            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+            <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary rounded-lg flex items-center justify-center">
               <div className="text-center">
-                <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Demo Image Coming Soon</p>
+                <div className="flex items-center justify-center space-x-4 mb-4">
+                  <Camera className="h-8 w-8 text-primary" />
+                  <span className="text-2xl">+</span>
+                  <MapPin className="h-8 w-8 text-primary" />
+                  <span className="text-2xl">=</span>
+                  <Sparkles className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-lg font-medium">AI旅行影像生成</p>
+                <p className="text-muted-foreground mt-2">上传自拍 + 选择地点 = 专属旅行大片</p>
               </div>
             </div>
           </div>
