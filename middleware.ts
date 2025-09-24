@@ -1,29 +1,13 @@
-import { withAuth } from "next-auth/middleware"
+// Temporarily disable middleware to fix redirect loop
+// This will be re-enabled once the NEXTAUTH_URL environment variable is properly configured
 
-export default withAuth(
-  function middleware(req) {
-    // Add any additional middleware logic here if needed
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        // Temporarily allow all requests to debug redirect loop
-        return true
-      },
-    },
-  }
-)
+export { default } from "next-auth/middleware"
 
 export const config = {
+  // Only protect specific routes that require authentication
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (NextAuth.js API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$|.*\\.webp$).*)",
-  ],
+    "/create/:path*",
+    "/gallery/:path*", 
+    "/settings/:path*"
+  ]
 }
