@@ -8,6 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { UserAvatar } from "@/components/ui/user-avatar"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
 interface GeneratedImage {
   id: string
@@ -27,6 +28,7 @@ export default function GalleryPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const { showConfirm, ConfirmDialog } = useConfirmDialog()
 
   // 处理认证状态
   useEffect(() => {
@@ -101,28 +103,33 @@ export default function GalleryPage() {
   }
 
   const handleDelete = async (image: GeneratedImage) => {
-    if (!confirm("确定要删除这张图片吗？此操作无法撤销。")) {
-      return
-    }
+    showConfirm({
+      title: "删除图片",
+      message: "确定要删除这张图片吗？此操作无法撤销。",
+      confirmText: "删除",
+      cancelText: "取消",
+      variant: "destructive",
+      onConfirm: async () => {
+        setIsDeleting(image.id)
+        try {
+          const response = await fetch(`/api/gallery/${image.id}`, {
+            method: "DELETE",
+          })
 
-    setIsDeleting(image.id)
-    try {
-      const response = await fetch(`/api/gallery/${image.id}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        setImages(images.filter(img => img.id !== image.id))
-        setSelectedImage(null)
-      } else {
-        alert("删除失败，请稍后重试")
+          if (response.ok) {
+            setImages(images.filter(img => img.id !== image.id))
+            setSelectedImage(null)
+          } else {
+            alert("删除失败，请稍后重试")
+          }
+        } catch (error) {
+          console.error("Delete error:", error)
+          alert("删除失败，请稍后重试")
+        } finally {
+          setIsDeleting(null)
+        }
       }
-    } catch (error) {
-      console.error("Delete error:", error)
-      alert("删除失败，请稍后重试")
-    } finally {
-      setIsDeleting(null)
-    }
+    })
   }
 
   if (isLoading) {
@@ -340,6 +347,9 @@ export default function GalleryPage() {
           </div>
         </div>
       )}
+
+      {/* 确认对话框 */}
+      <ConfirmDialog />
     </div>
   )
 }

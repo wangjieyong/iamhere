@@ -5,6 +5,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { User, Globe, LogOut, Camera, Download, Trash2, Settings as SettingsIcon } from 'lucide-react';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 // 临时内联组件定义，避免导入问题
 const Card = ({ children, className = '', ...props }: any) => (
@@ -92,6 +93,7 @@ export default function SettingsPage() {
     dailyLimit: 3
   });
   const [isLoading, setIsLoading] = useState(true);
+  const { showConfirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -123,22 +125,29 @@ export default function SettingsPage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (confirm('确定要删除账户吗？此操作不可撤销，将删除您的所有数据。')) {
-      try {
-        const response = await fetch('/api/user/delete', {
-          method: 'DELETE',
-        });
-        
-        if (response.ok) {
-          await signOut({ callbackUrl: '/' });
-        } else {
+    showConfirm({
+      title: "删除账户",
+      message: "确定要删除账户吗？此操作不可撤销，将删除您的所有数据。",
+      confirmText: "删除账户",
+      cancelText: "取消",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          const response = await fetch('/api/user/delete', {
+            method: 'DELETE',
+          });
+          
+          if (response.ok) {
+            await signOut({ callbackUrl: '/' });
+          } else {
+            alert('删除账户失败，请稍后重试');
+          }
+        } catch (error) {
+          console.error('删除账户失败:', error);
           alert('删除账户失败，请稍后重试');
         }
-      } catch (error) {
-        console.error('删除账户失败:', error);
-        alert('删除账户失败，请稍后重试');
       }
-    }
+    });
   };
 
   if (status === 'loading' || isLoading) {
@@ -339,6 +348,9 @@ export default function SettingsPage() {
           </Card>
         </div>
       </div>
+
+      {/* 确认对话框 */}
+      <ConfirmDialog />
     </div>
   );
 }
