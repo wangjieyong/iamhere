@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     })
 
     const currentUsageCount = todayUsage?.count || 0
-    const dailyLimit = 10 // 每日限制10次
+    const dailyLimit = 100 // 每日限制100次
 
     if (currentUsageCount >= dailyLimit) {
       return NextResponse.json(

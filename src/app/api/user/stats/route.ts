@@ -38,7 +38,7 @@ export async function GET() {
     });
 
     const dailyUsage = todayUsage?.count || 0;
-    const dailyLimit = 3; // 每日限额
+    const dailyLimit = 100; // 每日限额
 
     return NextResponse.json({
       totalImages,
