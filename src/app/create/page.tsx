@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Camera, Sparkles, Download, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Loading } from "@/components/ui/loading"
+import { Loading, LoadingOverlay } from "@/components/ui/loading"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { MapSelector } from "@/components/ui/map-selector"
 import { UserAvatar } from "@/components/ui/user-avatar"
@@ -184,62 +184,57 @@ export default function CreatePage() {
       <div className="container mx-auto px-4 py-8">
         {!generatedImage ? (
           /* 创作界面 */
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-4">创造你的AI旅行体验</h1>
-              <p className="text-muted-foreground">
-                上传一张图片，选择地理位置，让AI为你生成独特的旅行场景
-              </p>
-            </div>
-
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* 左侧：图片上传 */}
-              <div className="space-y-6">
-                <ImageUpload
-                  onImageSelect={handleImageSelect}
-                  selectedImage={selectedImage || undefined}
-                  onImageRemove={handleImageRemove}
-                />
+          <LoadingOverlay isLoading={isGenerating}>
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold mb-4">创造你的AI旅行体验</h1>
+                <p className="text-muted-foreground">
+                  上传一张图片，选择地理位置，让AI为你生成独特的旅行场景
+                </p>
               </div>
 
-              {/* 右侧：地图选择 */}
-              <div className="space-y-6">
-                <MapSelector
-                  onLocationSelect={handleLocationSelect}
-                  selectedLocation={selectedLocation || undefined}
-                />
-              </div>
-            </div>
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* 左侧：图片上传 */}
+                <div className="space-y-6">
+                  <ImageUpload
+                    onImageSelect={handleImageSelect}
+                    selectedImage={selectedImage || undefined}
+                    onImageRemove={handleImageRemove}
+                  />
+                </div>
 
-            {/* 错误信息 */}
-            {error && (
-              <div className="mt-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <p className="text-sm text-destructive">{error}</p>
+                {/* 右侧：地图选择 */}
+                <div className="space-y-6">
+                  <MapSelector
+                    onLocationSelect={handleLocationSelect}
+                    selectedLocation={selectedLocation || undefined}
+                  />
+                </div>
               </div>
-            )}
 
-            {/* 生成按钮 */}
-            <div className="mt-8 text-center">
-              <Button
-                onClick={handleGenerate}
-                disabled={!selectedImage || !selectedLocation || isGenerating}
-                size="lg"
-                className="px-8"
-              >
-                {isGenerating ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    <span>AI正在创作中...</span>
-                  </div>
-                ) : (
+              {/* 错误信息 */}
+              {error && (
+                <div className="mt-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
+              )}
+
+              {/* 生成按钮 */}
+              <div className="mt-8 text-center">
+                <Button
+                  onClick={handleGenerate}
+                  disabled={!selectedImage || !selectedLocation || isGenerating}
+                  size="lg"
+                  className="px-8"
+                >
                   <div className="flex items-center space-x-2">
                     <Sparkles className="h-5 w-5" />
                     <span>开始AI创作</span>
                   </div>
-                )}
-              </Button>
+                </Button>
+              </div>
             </div>
-          </div>
+          </LoadingOverlay>
         ) : (
           /* 结果展示界面 */
           <div className="max-w-4xl mx-auto">
