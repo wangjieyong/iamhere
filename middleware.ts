@@ -7,30 +7,8 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Check if user is authenticated for protected routes
-        const { pathname } = req.nextUrl
-        
-        // Public routes that don't require authentication
-        const publicRoutes = [
-          "/",
-          "/auth/signin",
-          "/terms",
-          "/privacy",
-          "/api/auth",
-        ]
-        
-        // Check if the current path is public
-        const isPublicRoute = publicRoutes.some(route => 
-          pathname.startsWith(route)
-        )
-        
-        // Allow access to public routes
-        if (isPublicRoute) {
-          return true
-        }
-        
-        // For protected routes, require authentication
-        return !!token
+        // Temporarily allow all requests to debug redirect loop
+        return true
       },
     },
   }
@@ -46,6 +24,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder files
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$|.*\\.webp$).*)",
   ],
 }
