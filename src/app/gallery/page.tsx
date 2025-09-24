@@ -58,11 +58,11 @@ export default function GalleryPage() {
 
   // 如果未登录，显示加载状态
   if (status === "loading") {
-    return <Loading />
+    return <Loading text="正在加载..." />
   }
 
   if (status === "unauthenticated") {
-    return <Loading />
+    return <Loading text="正在跳转到登录页面..." />
   }
 
   const handleDownload = async (image: GeneratedImage) => {
@@ -126,7 +126,7 @@ export default function GalleryPage() {
   }
 
   if (isLoading) {
-    return <Loading />
+    return <Loading text="正在加载图库..." />
   }
 
   return (

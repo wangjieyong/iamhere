@@ -53,11 +53,11 @@ export default function CreatePage() {
 
   // 如果未登录且非演示模式，显示加载状态
   if (!isDemoMode && status === "loading") {
-    return <Loading />
+    return <Loading text="正在加载..." />
   }
 
   if (!isDemoMode && status === "unauthenticated") {
-    return <Loading />
+    return <Loading text="正在跳转到登录页面..." />
   }
 
   const handleImageSelect = (file: File) => {
