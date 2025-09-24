@@ -36,27 +36,20 @@ export default function CreatePage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null)
   const [error, setError] = useState<string>("")
-  const [isDemoMode, setIsDemoMode] = useState(false)
 
-  // 检查是否为演示模式
+  // 处理认证状态
   useEffect(() => {
-    const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
-    setIsDemoMode(demoMode)
-  }, [])
-
-  // 处理认证状态（演示模式下跳过）
-  useEffect(() => {
-    if (!isDemoMode && status === "unauthenticated") {
+    if (status === "unauthenticated") {
       router.push("/auth/signin")
     }
-  }, [status, router, isDemoMode])
+  }, [status, router])
 
-  // 如果未登录且非演示模式，显示加载状态
-  if (!isDemoMode && status === "loading") {
+  // 如果未登录，显示加载状态
+  if (status === "loading") {
     return <Loading text="正在加载..." />
   }
 
-  if (!isDemoMode && status === "unauthenticated") {
+  if (status === "unauthenticated") {
     return <Loading text="正在跳转到登录页面..." />
   }
 

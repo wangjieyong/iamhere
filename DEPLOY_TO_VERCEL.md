@@ -60,7 +60,6 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your-mapbox-access-token
 
 # 生产环境设置
 NODE_ENV=production
-NEXT_PUBLIC_DEMO_MODE=false
 
 # 分析和监控 (可选)
 # Vercel Analytics 会自动启用，无需额外配置

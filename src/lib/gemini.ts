@@ -239,34 +239,3 @@ export function getModelInfo() {
     },
   };
 }
-
-// 演示模式的图像生成（用于替换当前的模拟实现）
-export async function generateDemoImage(request: ImageGenerationRequest): Promise<ImageGenerationResponse> {
-  // 检查是否有有效的API密钥
-  if (!GEMINI_API_KEY || GEMINI_API_KEY === "your-google-ai-api-key" || GEMINI_API_KEY.length < 10) {
-    console.log('[Gemini] Demo mode: No valid API key, returning mock image data');
-    
-    // 返回一个简单的模拟图像（1x1像素的透明PNG）
-    const mockImageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
-    
-    return {
-      success: true,
-      imageData: mockImageData,
-      metadata: {
-        prompt: `Demo: ${request.prompt}`,
-        model: 'demo-mode',
-        generatedAt: new Date().toISOString(),
-      },
-    };
-  }
-  
-  // 如果有有效的API密钥，使用真实的 Gemini API
-  console.log('[Gemini] Demo mode: Using real API with demo prompt');
-  const demoRequest: ImageGenerationRequest = {
-    ...request,
-    prompt: `Demo: ${request.prompt}. Create a stunning, high-quality demonstration image.`,
-    style: request.style || 'photorealistic, professional, vibrant',
-  };
-  
-  return generateImage(demoRequest);
-}
