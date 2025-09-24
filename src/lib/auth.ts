@@ -12,6 +12,9 @@ export const authOptions = {
   ...(process.env.NEXTAUTH_URL && {
     url: process.env.NEXTAUTH_URL
   }),
+  
+  // Use Prisma adapter to automatically create user records in database
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
