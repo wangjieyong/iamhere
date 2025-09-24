@@ -161,7 +161,9 @@ export async function POST(request: NextRequest) {
     const imageRequest: ImageGenerationRequest = {
       prompt: basePrompt,
       location: location.address,
-      style: 'photorealistic, travel photography, high quality'
+      style: 'photorealistic, travel photography, high quality',
+      inputImage: imageBase64,
+      inputImageMimeType: imageFile.type
     }
 
     // 使用新的Gemini API客户端生成图像

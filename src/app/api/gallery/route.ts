@@ -13,9 +13,21 @@ export async function GET() {
       )
     }
 
+    // 首先获取用户信息
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      )
+    }
+
     const userImages = await prisma.generatedImage.findMany({
       where: {
-        userEmail: session.user.email
+        userId: user.id
       },
       orderBy: {
         createdAt: 'desc'
@@ -25,7 +37,9 @@ export async function GET() {
         prompt: true,
         imageUrl: true,
         createdAt: true,
-        location: true
+        location: true,
+        locationLat: true,
+        locationLng: true
       }
     })
 

@@ -24,6 +24,8 @@ export interface ImageGenerationRequest {
   prompt: string;
   location?: string;
   style?: string;
+  inputImage?: string; // base64 encoded input image
+  inputImageMimeType?: string; // MIME type of input image
 }
 
 export interface ImageGenerationResponse {
@@ -60,9 +62,24 @@ function calculateRetryDelay(attempt: number): number {
 function buildOptimizedPrompt(request: ImageGenerationRequest): string {
   let prompt = request.prompt;
   
-  // 如果包含地点信息，增强提示词
-  if (request.location) {
-    prompt = `Create a beautiful, photorealistic image of ${prompt} at ${request.location}. `;
+  // 如果有输入图片，优化为图片融合提示词
+  if (request.inputImage) {
+    prompt = `Based on the uploaded image, create a new travel photograph that seamlessly integrates the person/subject from the uploaded image into a beautiful scene at ${request.location || 'the specified location'}. 
+    
+    Instructions:
+    - Keep the person's appearance, clothing, and pose from the original image
+    - Place them naturally in the new location environment
+    - Ensure realistic lighting and shadows that match the new environment
+    - Maintain photorealistic quality and natural composition
+    - Make it look like an authentic travel photo taken at the destination
+    - Preserve the person's facial features and characteristics exactly
+    
+    ${request.prompt}`;
+  } else {
+    // 如果没有输入图片，使用原来的逻辑
+    if (request.location) {
+      prompt = `Create a beautiful, photorealistic travel image at ${request.location}. ${prompt}`;
+    }
   }
   
   // 如果指定了风格，添加风格描述
@@ -71,7 +88,7 @@ function buildOptimizedPrompt(request: ImageGenerationRequest): string {
   }
   
   // 添加质量和细节要求
-  prompt += ' High quality, detailed, professional photography, vibrant colors, excellent composition.';
+  prompt += ' High quality, detailed, professional travel photography, vibrant colors, excellent composition, natural lighting.';
   
   return prompt;
 }
@@ -91,9 +108,26 @@ export async function generateImage(request: ImageGenerationRequest): Promise<Im
         prompt: optimizedPrompt,
         location: request.location,
         style: request.style,
+        hasInputImage: !!request.inputImage,
       });
       
-      const result = await model.generateContent(optimizedPrompt);
+      // 准备内容数组
+      const contentParts: any[] = [
+        { text: optimizedPrompt }
+      ];
+      
+      // 如果有输入图片，添加到内容中
+      if (request.inputImage && request.inputImageMimeType) {
+        contentParts.push({
+          inlineData: {
+            data: request.inputImage,
+            mimeType: request.inputImageMimeType
+          }
+        });
+        console.log(`[Gemini] Including input image (${request.inputImageMimeType})`);
+      }
+      
+      const result = await model.generateContent(contentParts);
       const response = await result.response;
       
       // 检查响应是否包含图像数据
