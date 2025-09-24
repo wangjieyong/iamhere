@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils"
 interface LoadingProps {
   className?: string
   text?: string
+  fullScreen?: boolean
 }
 
-export function Loading({ className, text = "Generating your travel photo..." }: LoadingProps) {
-  return (
-    <div className={cn("flex flex-col items-center justify-center space-y-4", className)}>
+export function Loading({ className, text = "Generating your travel photo...", fullScreen = true }: LoadingProps) {
+  const content = (
+    <>
       <div className="relative">
         <svg
           className="w-12 h-12 text-primary animate-paper-plane"
@@ -24,6 +25,20 @@ export function Loading({ className, text = "Generating your travel photo..." }:
           {text}
         </p>
       )}
+    </>
+  )
+
+  if (fullScreen) {
+    return (
+      <div className={cn("min-h-screen flex flex-col items-center justify-center space-y-4 bg-background", className)}>
+        {content}
+      </div>
+    )
+  }
+
+  return (
+    <div className={cn("flex flex-col items-center justify-center space-y-4", className)}>
+      {content}
     </div>
   )
 }
@@ -38,7 +53,7 @@ export function LoadingOverlay({ children, isLoading, loadingText }: {
       {children}
       {isLoading && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
-          <Loading text={loadingText} />
+          <Loading text={loadingText} fullScreen={false} />
         </div>
       )}
     </div>
