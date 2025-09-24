@@ -61,6 +61,12 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your-mapbox-access-token
 # 生产环境设置
 NODE_ENV=production
 NEXT_PUBLIC_DEMO_MODE=false
+
+# 分析和监控 (可选)
+# Vercel Analytics 会自动启用，无需额外配置
+# Google Analytics 4 - 后续迭代可启用
+ENABLE_GA4=false
+GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ```
 
 #### 可选的环境变量
@@ -161,9 +167,11 @@ DATABASE_URL="your-production-database-url" npx prisma migrate deploy
    - 在 Vercel Dashboard 中查看 "Functions" 标签
    - 检查实时日志和错误信息
 
-2. **性能监控**
-   - 使用 Vercel Analytics
-   - 监控 API 响应时间和错误率
+2. **性能监控和分析**
+   - **Vercel Analytics**: 自动启用，提供页面访问、性能指标和用户行为数据
+   - **实时监控**: 在 Vercel Dashboard 的 "Analytics" 标签查看数据
+   - **错误追踪**: 通过 Vercel Functions 日志监控 API 错误
+   - **性能指标**: 监控页面加载时间、API 响应时间等
 
 ## 📝 部署后检查清单
 

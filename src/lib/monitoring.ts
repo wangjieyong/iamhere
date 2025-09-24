@@ -88,21 +88,21 @@ class AnalyticsService {
     }, userId)
   }
 
-  // 发送到分析服务（可集成Google Analytics、Mixpanel等）
+  // 发送到分析服务（Vercel Analytics + 可选的其他服务）
   private async sendToAnalyticsService(event: AnalyticsEvent) {
     try {
-      // 这里可以集成第三方分析服务
-      // 例如：Google Analytics 4, Mixpanel, PostHog等
+      // Vercel Analytics - 自动收集页面访问和性能数据
+      // 通过 @vercel/analytics 包自动处理，无需手动发送事件
       
-      // Google Analytics 4 示例
-      if (typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
+      // 可选：Google Analytics 4（后续迭代可启用）
+      if (process.env.ENABLE_GA4 === 'true' && typeof window !== 'undefined' && (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag) {
         (window as unknown as { gtag: (...args: unknown[]) => void }).gtag('event', event.event, {
           ...event.properties,
           user_id: event.userId
         })
       }
 
-      // 或者发送到自定义分析端点
+      // 可选：自定义分析端点
       if (process.env.ANALYTICS_ENDPOINT) {
         await fetch(process.env.ANALYTICS_ENDPOINT, {
           method: 'POST',
