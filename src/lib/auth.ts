@@ -1,13 +1,17 @@
-import { NextAuthOptions } from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "./prisma"
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   // Note: Using JWT strategy, so no adapter needed for sessions
   // But we still need to create users in database for our app logic
   debug: process.env.NODE_ENV === 'development',
+  
+  // Ensure proper URL configuration
+  ...(process.env.NEXTAUTH_URL && {
+    url: process.env.NEXTAUTH_URL
+  }),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
