@@ -1,5 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import GoogleProvider from "next-auth/providers/google"
+import TwitterProvider from "next-auth/providers/twitter"
 import { prisma } from "./prisma"
 
 export const authOptions = {
@@ -20,38 +21,16 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     // Twitter/X OAuth 2.0 Configuration
-    // Note: Using custom configuration for OAuth 2.0 instead of default OAuth 1.0a
-    {
-      id: "twitter",
-      name: "Twitter",
-      type: "oauth",
-      version: "2.0",
-      authorization: {
-        url: "https://twitter.com/i/oauth2/authorize",
-        params: {
-          scope: "tweet.read users.read",
-          response_type: "code",
-          code_challenge_method: "S256",
-        },
-      },
-      token: "https://api.twitter.com/2/oauth2/token",
-      userinfo: {
-        url: "https://api.twitter.com/2/users/me",
-        params: {
-          "user.fields": "id,name,username,profile_image_url"
-        }
-      },
+    TwitterProvider({
       clientId: process.env.TWITTER_CLIENT_ID!,
       clientSecret: process.env.TWITTER_CLIENT_SECRET!,
-      profile(profile: any) {
-        return {
-          id: profile.data.id,
-          name: profile.data.name,
-          email: null, // Twitter API v2 doesn't provide email by default
-          image: profile.data.profile_image_url,
-        }
+      version: "2.0", // Enable OAuth 2.0
+      authorization: {
+        params: {
+          scope: "users.read tweet.read",
+        },
       },
-    },
+    }),
   ],
   session: {
     strategy: "jwt",
