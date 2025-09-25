@@ -5,8 +5,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Camera, AlertCircle } from "lucide-react"
 import { useTranslation } from "@/hooks/use-translation"
+import { Suspense } from "react"
 
-export default function AuthError() {
+function AuthErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get("error")
   const { t } = useTranslation()
@@ -88,5 +89,28 @@ export default function AuthError() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthError() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-md text-center">
+          <div className="mb-8">
+            <Link href="/" className="inline-flex items-center space-x-2 mb-6">
+              <Camera className="h-8 w-8 text-primary" />
+              <span className="text-2xl font-bold">IAmHere</span>
+            </Link>
+            <div className="flex justify-center mb-4">
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            </div>
+            <p className="text-muted-foreground">加载中...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <AuthErrorContent />
+    </Suspense>
   )
 }
