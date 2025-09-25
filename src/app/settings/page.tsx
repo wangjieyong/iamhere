@@ -84,14 +84,19 @@ interface UserStats {
   dailyLimit: number;
 }
 
+interface UserProvider {
+  provider: string;
+}
+
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userStats, setUserStats] = useState<UserStats>({
     totalImages: 0,
     dailyUsage: 0,
-    dailyLimit: 3
+    dailyLimit: 100
   });
+  const [userProvider, setUserProvider] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const { showConfirm, ConfirmDialog } = useConfirmDialog();
 
@@ -103,6 +108,7 @@ export default function SettingsPage() {
 
     if (session?.user) {
       fetchUserStats();
+      fetchUserProvider();
     }
   }, [session, status, router]);
 
@@ -117,6 +123,18 @@ export default function SettingsPage() {
       console.error('获取用户统计失败:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchUserProvider = async () => {
+    try {
+      const response = await fetch('/api/user/provider');
+      if (response.ok) {
+        const data = await response.json();
+        setUserProvider(data.provider);
+      }
+    } catch (error) {
+      console.error('获取用户provider失败:', error);
     }
   };
 
@@ -207,9 +225,11 @@ export default function SettingsPage() {
                 </Avatar>
                 <div className="space-y-1">
                   <h3 className="text-lg font-medium">{session.user.name || '未设置姓名'}</h3>
-                  <p className="text-muted-foreground">{session.user.email}</p>
+                  <p className="text-muted-foreground">{session.user.email || '未提供邮箱'}</p>
                   <Badge variant="secondary" className="text-xs">
-                    Google 账户
+                    {userProvider === 'twitter' ? 'Twitter 账户' : 
+                     userProvider === 'google' ? 'Google 账户' : 
+                     '第三方账户'}
                   </Badge>
                 </div>
               </div>

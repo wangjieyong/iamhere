@@ -8,7 +8,7 @@ import { Prisma } from "@prisma/client"
 
 interface User {
   id: string
-  email: string
+  email: string | null
   name?: string | null
   image?: string | null
   language?: string | null
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     
     // 检查用户认证
     const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json(
         { error: "未授权访问" },
         { status: 401 }
@@ -33,10 +33,10 @@ export async function POST(request: NextRequest) {
 
     let user: User | null = null
 
-    console.log('Looking up user:', session.user.email)
-    // 获取用户信息
+    console.log('Looking up user by ID:', session.user.id)
+    // 获取用户信息 - 使用用户ID而不是email（支持Twitter用户）
     user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
       include: { dailyUsage: true }
     })
 
