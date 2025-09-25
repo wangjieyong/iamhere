@@ -24,7 +24,6 @@ export async function DELETE(
 
     console.log(`[DELETE IMAGE] User authenticated:`, {
       id: session.user.id,
-      email: session.user.email,
       name: session.user.name
     })
 

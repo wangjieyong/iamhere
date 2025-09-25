@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (!user) {
-      console.log('User not found in database:', session.user.email)
+      console.log('User not found in database:', session.user.id)
       return NextResponse.json(
         { error: "用户不存在" },
         { status: 400 }

@@ -56,7 +56,7 @@ export function UserAvatar() {
           </div>
         )}
         <span className="text-sm font-medium hidden sm:block">
-          {session.user.name || session.user.email}
+          {session.user.name || "用户"}
         </span>
       </button>
 
@@ -79,9 +79,11 @@ export function UserAvatar() {
                 <p className="text-sm font-medium truncate">
                   {session.user.name || "用户"}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {session.user.email}
-                </p>
+                {session.user.email && (
+                  <p className="text-xs text-muted-foreground truncate">
+                    {session.user.email}
+                  </p>
+                )}
               </div>
             </div>
           </div>

@@ -220,12 +220,14 @@ export default function SettingsPage() {
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={session.user.image || ''} alt={session.user.name || ''} />
                   <AvatarFallback className="text-lg">
-                    {session.user.name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
+                    {session.user.name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
                   <h3 className="text-lg font-medium">{session.user.name || '未设置姓名'}</h3>
-                  <p className="text-muted-foreground">{session.user.email || '未提供邮箱'}</p>
+                  {session.user.email && (
+                    <p className="text-muted-foreground">{session.user.email}</p>
+                  )}
                   <Badge variant="secondary" className="text-xs">
                     {userProvider === 'twitter' ? 'Twitter 账户' : 
                      userProvider === 'google' ? 'Google 账户' : 
