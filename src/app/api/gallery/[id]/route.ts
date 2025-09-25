@@ -14,7 +14,7 @@ export async function DELETE(
   try {
     // 验证用户身份
     const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       console.log(`[DELETE IMAGE] Unauthorized access attempt for image ID: ${imageId}`)
       return NextResponse.json(
         { error: "未授权访问" },
@@ -22,15 +22,19 @@ export async function DELETE(
       )
     }
 
-    console.log(`[DELETE IMAGE] User authenticated: ${session.user.email}`)
+    console.log(`[DELETE IMAGE] User authenticated:`, {
+      id: session.user.id,
+      email: session.user.email,
+      name: session.user.name
+    })
 
-    // 获取用户信息
+    // 获取用户信息 - 优先通过ID查找
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email }
+      where: { id: session.user.id }
     })
 
     if (!user) {
-      console.log(`[DELETE IMAGE] User not found for email: ${session.user.email}`)
+      console.log(`[DELETE IMAGE] User not found for ID: ${session.user.id}`)
       return NextResponse.json(
         { error: "用户不存在" },
         { status: 404 }
@@ -58,7 +62,7 @@ export async function DELETE(
     console.log(`[DELETE IMAGE] Image found: ${image.imageUrl}`)
 
     // 使用事务确保数据一致性
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // 删除数据库记录
       await tx.generatedImage.delete({
         where: { id: imageId }
