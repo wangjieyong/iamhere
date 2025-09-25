@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { FILE_LIMITS } from "./constants"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -22,20 +23,17 @@ export function formatFileSize(bytes: number): string {
 }
 
 export function validateImageFile(file: File): { isValid: boolean; error?: string } {
-  const maxSize = parseInt(process.env.NEXT_PUBLIC_MAX_FILE_SIZE || '20971520') // 20MB
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic']
-  
-  if (!allowedTypes.includes(file.type)) {
+  if (!FILE_LIMITS.ALLOWED_IMAGE_FORMATS.includes(file.type as any)) {
     return {
       isValid: false,
-      error: 'Only JPG, PNG, and HEIC files are supported'
+      error: 'Only JPG, PNG, WebP, and HEIC files are supported'
     }
   }
   
-  if (file.size > maxSize) {
+  if (file.size > FILE_LIMITS.MAX_IMAGE_SIZE_BYTES) {
     return {
       isValid: false,
-      error: `File size must be less than ${formatFileSize(maxSize)}`
+      error: `File size must be less than ${formatFileSize(FILE_LIMITS.MAX_IMAGE_SIZE_BYTES)}`
     }
   }
   

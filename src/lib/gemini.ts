@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { API_CONFIG } from './constants';
 
 // Gemini API 配置
 const GEMINI_API_KEY = process.env.GOOGLE_AI_API_KEY;
@@ -40,12 +41,8 @@ export interface ImageGenerationResponse {
   };
 }
 
-// 重试配置
-const RETRY_CONFIG = {
-  maxRetries: 3,
-  baseDelay: 1000, // 1秒
-  maxDelay: 10000, // 10秒
-};
+// 使用统一的重试配置
+const RETRY_CONFIG = API_CONFIG.RETRY;
 
 // 延迟函数
 function delay(ms: number): Promise<void> {
@@ -54,8 +51,8 @@ function delay(ms: number): Promise<void> {
 
 // 计算重试延迟（指数退避）
 function calculateRetryDelay(attempt: number): number {
-  const delay = RETRY_CONFIG.baseDelay * Math.pow(2, attempt);
-  return Math.min(delay, RETRY_CONFIG.maxDelay);
+  const delay = RETRY_CONFIG.BASE_DELAY_MS * Math.pow(2, attempt);
+  return Math.min(delay, RETRY_CONFIG.MAX_DELAY_MS);
 }
 
 // 构建优化的提示词
@@ -97,14 +94,14 @@ function buildOptimizedPrompt(request: ImageGenerationRequest): string {
 export async function generateImage(request: ImageGenerationRequest): Promise<ImageGenerationResponse> {
   let lastError: Error | null = null;
   
-  for (let attempt = 0; attempt <= RETRY_CONFIG.maxRetries; attempt++) {
+  for (let attempt = 0; attempt <= RETRY_CONFIG.MAX_ATTEMPTS; attempt++) {
     try {
       const client = getGeminiClient();
       const model = client.getGenerativeModel({ model: MODEL_NAME });
       
       const optimizedPrompt = buildOptimizedPrompt(request);
       
-      console.log(`[Gemini] Generating image (attempt ${attempt + 1}/${RETRY_CONFIG.maxRetries + 1}):`, {
+      console.log(`[Gemini] Generating image (attempt ${attempt + 1}/${RETRY_CONFIG.MAX_ATTEMPTS + 1}):`, {
         prompt: optimizedPrompt,
         location: request.location,
         style: request.style,
@@ -175,7 +172,7 @@ export async function generateImage(request: ImageGenerationRequest): Promise<Im
       console.error(`[Gemini] Attempt ${attempt + 1} failed:`, error);
       
       // 如果是最后一次尝试，不再重试
-      if (attempt === RETRY_CONFIG.maxRetries) {
+      if (attempt === RETRY_CONFIG.MAX_ATTEMPTS) {
         break;
       }
       
@@ -192,7 +189,7 @@ export async function generateImage(request: ImageGenerationRequest): Promise<Im
   
   return {
     success: false,
-    error: `Failed to generate image after ${RETRY_CONFIG.maxRetries + 1} attempts: ${errorMessage}`,
+    error: `Failed to generate image after ${RETRY_CONFIG.MAX_ATTEMPTS + 1} attempts: ${errorMessage}`,
   };
 }
 

@@ -1,3 +1,6 @@
+// 错误处理工具类
+import { FILE_LIMITS } from "./constants"
+
 // 错误类型定义
 export enum ErrorCode {
   // 认证错误
@@ -60,8 +63,8 @@ const ERROR_MESSAGES: Record<ErrorCode, { zh: string; en: string }> = {
     en: 'Unsupported image format, please upload JPG, PNG or WebP images'
   },
   [ErrorCode.IMAGE_TOO_LARGE]: {
-    zh: '图片文件过大，请上传小于 10MB 的图片',
-    en: 'Image file too large, please upload images smaller than 10MB'
+    zh: `图片文件过大，请上传小于 ${FILE_LIMITS.MAX_IMAGE_SIZE_MB}MB 的图片`,
+    en: `Image file too large, please upload images smaller than ${FILE_LIMITS.MAX_IMAGE_SIZE_MB}MB`
   },
   [ErrorCode.LOCATION_REQUIRED]: {
     zh: '请选择一个地理位置',
@@ -163,14 +166,11 @@ export function withErrorHandler<T extends unknown[], R>(
 export const validators = {
   // 验证图片文件
   validateImageFile(file: File): void {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-    const maxSize = 10 * 1024 * 1024 // 10MB
-
-    if (!allowedTypes.includes(file.type)) {
+    if (!FILE_LIMITS.ALLOWED_IMAGE_FORMATS.includes(file.type as any)) {
       throw new AppError(ErrorCode.INVALID_IMAGE_FORMAT, 'Invalid image format', 400)
     }
 
-    if (file.size > maxSize) {
+    if (file.size > FILE_LIMITS.MAX_IMAGE_SIZE_BYTES) {
       throw new AppError(ErrorCode.IMAGE_TOO_LARGE, 'Image file too large', 400)
     }
   },

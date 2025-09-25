@@ -4,28 +4,27 @@
  * 管理Mapbox地图和地理编码服务的配置
  */
 
+import { MAP_CONFIG } from './constants'
+
 export const MAPBOX_CONFIG = {
   // Mapbox访问令牌
-  accessToken: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
+  accessToken: MAP_CONFIG.MAPBOX.ACCESS_TOKEN,
   
   // 默认地图样式
-  style: 'mapbox://styles/mapbox/streets-v12',
+  style: MAP_CONFIG.MAPBOX.DEFAULT_STYLE,
   
   // 默认地图中心点（全球中心）
-  defaultCenter: {
-    lng: 0,
-    lat: 0
-  },
+  defaultCenter: MAP_CONFIG.MAPBOX.DEFAULT_CENTER,
   
   // 默认缩放级别
-  defaultZoom: 10,
+  defaultZoom: MAP_CONFIG.MAPBOX.DEFAULT_ZOOM,
   
   // 地理编码API配置
   geocoding: {
-    baseUrl: 'https://api.mapbox.com/geocoding/v5/mapbox.places',
-    limit: 10, // 搜索结果数量限制
-    types: ['country', 'region', 'postcode', 'district', 'place', 'locality', 'neighborhood', 'address', 'poi'], // 搜索类型
-    language: 'en' // 搜索语言，使用英语作为默认语言
+    baseUrl: MAP_CONFIG.MAPBOX.GEOCODING.BASE_URL,
+    limit: MAP_CONFIG.MAPBOX.GEOCODING.LIMIT,
+    types: MAP_CONFIG.MAPBOX.GEOCODING.TYPES,
+    language: MAP_CONFIG.MAPBOX.GEOCODING.LANGUAGE
   }
 }
 

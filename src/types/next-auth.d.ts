@@ -7,4 +7,14 @@ declare module "next-auth" {
       image?: string | null
     }
   }
+
+  interface User {
+    id: string
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string
+  }
 }

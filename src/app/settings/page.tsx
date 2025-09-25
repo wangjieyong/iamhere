@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { User, Globe, LogOut, Camera, Download, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
+import { USER_LIMITS } from '@/lib/constants';
 
 // 临时内联组件定义，避免导入问题
 const Card = ({ children, className = '', ...props }: any) => (
@@ -94,7 +95,7 @@ export default function SettingsPage() {
   const [userStats, setUserStats] = useState<UserStats>({
     totalImages: 0,
     dailyUsage: 0,
-    dailyLimit: 100
+    dailyLimit: USER_LIMITS.DAILY_GENERATION_LIMIT
   });
   const [userProvider, setUserProvider] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);

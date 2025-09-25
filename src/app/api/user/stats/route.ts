@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { USER_LIMITS } from '@/lib/constants';
 
 export async function GET() {
   try {
@@ -38,12 +39,11 @@ export async function GET() {
     });
 
     const dailyUsage = todayUsage?.count || 0;
-    const dailyLimit = 100; // 每日限额
 
     return NextResponse.json({
       totalImages,
       dailyUsage,
-      dailyLimit,
+      dailyLimit: USER_LIMITS.DAILY_GENERATION_LIMIT,
     });
 
   } catch (error: unknown) {

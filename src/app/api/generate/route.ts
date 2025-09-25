@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { AppError, ErrorCode, createErrorResponse, logError } from "@/lib/error-handler"
 import { generateImage, checkGeminiAvailability, ImageGenerationRequest } from "@/lib/gemini"
 import { Prisma } from "@prisma/client"
+import { USER_LIMITS } from "@/lib/constants"
 
 interface User {
   id: string
@@ -61,11 +62,10 @@ export async function POST(request: NextRequest) {
     })
 
     const currentUsageCount = todayUsage?.count || 0
-    const dailyLimit = 100 // 每日限制100次
 
-    if (currentUsageCount >= dailyLimit) {
+    if (currentUsageCount >= USER_LIMITS.DAILY_GENERATION_LIMIT) {
       return NextResponse.json(
-        { error: `今日生成次数已达上限（${dailyLimit}次），请明天再试` },
+        { error: `今日生成次数已达上限（${USER_LIMITS.DAILY_GENERATION_LIMIT}次），请明天再试` },
         { status: 429 }
       )
     }
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
       success: true,
       imageUrl: generatedImageUrl,
       prompt: finalPrompt,
-      remainingUsage: dailyLimit - (todayUsage?.count || 0) - 1,
+      remainingUsage: USER_LIMITS.DAILY_GENERATION_LIMIT - (todayUsage?.count || 0) - 1,
       generatedImage
     })
 

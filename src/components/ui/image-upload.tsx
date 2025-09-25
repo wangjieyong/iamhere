@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react"
 import { Upload, X, Image as ImageIcon } from "lucide-react"
 import { Button } from "./button"
 import { validateImageFile } from "@/lib/utils"
+import { FILE_LIMITS } from "@/lib/constants"
 
 interface ImageUploadProps {
   onImageSelect: (file: File) => void
@@ -17,7 +18,7 @@ export function ImageUpload({
   onImageSelect, 
   selectedImage, 
   onImageRemove,
-  maxSize = 10,
+  maxSize = FILE_LIMITS.MAX_IMAGE_SIZE_MB,
   accept = "image/*"
 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
