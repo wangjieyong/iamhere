@@ -112,19 +112,53 @@ export default function GalleryPage() {
       onConfirm: async () => {
         setIsDeleting(image.id)
         try {
+          console.log(`[FRONTEND] Starting deletion for image: ${image.id}`)
+          
           const response = await fetch(`/api/gallery/${image.id}`, {
             method: "DELETE",
           })
 
+          const data = await response.json()
+          console.log(`[FRONTEND] Delete response:`, data)
+
           if (response.ok) {
+            // 成功删除
             setImages(images.filter(img => img.id !== image.id))
             setSelectedImage(null)
+            console.log(`[FRONTEND] Image ${image.id} deleted successfully`)
+            
+            // 显示成功消息
+            if (data.message) {
+              // 可以添加一个成功提示组件，这里暂时用console.log
+              console.log(`[FRONTEND] Success: ${data.message}`)
+            }
           } else {
-            alert("删除失败，请稍后重试")
+            // 处理不同的错误状态
+            let errorMessage = "删除失败，请稍后重试"
+            
+            if (response.status === 401) {
+              errorMessage = "请先登录后再删除图片"
+            } else if (response.status === 404) {
+              errorMessage = data.error || "图片不存在或已被删除"
+            } else if (response.status === 500) {
+              errorMessage = data.error || "服务器错误，请稍后重试"
+            } else if (data.error) {
+              errorMessage = data.error
+            }
+            
+            console.error(`[FRONTEND] Delete failed with status ${response.status}:`, data)
+            alert(errorMessage)
           }
         } catch (error) {
-          console.error("Delete error:", error)
-          alert("删除失败，请稍后重试")
+          console.error(`[FRONTEND] Delete error for image ${image.id}:`, error)
+          
+          // 网络错误或其他异常
+          let errorMessage = "删除失败，请检查网络连接后重试"
+          if (error instanceof Error) {
+            errorMessage = `删除失败：${error.message}`
+          }
+          
+          alert(errorMessage)
         } finally {
           setIsDeleting(null)
         }
