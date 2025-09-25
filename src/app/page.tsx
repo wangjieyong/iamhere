@@ -32,16 +32,16 @@ export default function Home() {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-4xl">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-            AI 带你环游世界，
-            <br />
-            <span className="text-primary">只需一张自拍</span>
+            <span className="text-primary">此刻，身在四方。</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            用户上传自拍，在世界地图选点，AI生成身临其境的旅行大片。
-            不是假装旅行，而是打破时空限制，创造虚实交织的影像艺术。
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
+            <span className="text-foreground font-medium">你在这里，世界就在这里。</span>
+            <br />
+            <br />
+            <span className="text-muted-foreground">只需一张自拍，AI将为你生成身临其境的旅行影像。</span>
           </p>
           <Button size="lg" asChild className="mb-12">
-            <Link href="/auth/signin">立即体验</Link>
+            <Link href="/auth/signin">立即免费体验</Link>
           </Button>
           
           {/* Feature Preview */}
@@ -66,33 +66,33 @@ export default function Home() {
       {/* How It Works */}
       <section className="py-20 px-4 bg-secondary/50">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">如何使用</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">三步，开启时空漫游</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Camera className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">1. 上传自拍</h3>
+              <h3 className="text-xl font-semibold mb-2">📸 拍张照，上传</h3>
               <p className="text-muted-foreground">
-                上传一张包含人物的照片，支持 JPG、PNG、HEIC 格式，最大 20MB
+                你的瞬间一秒上传，支持多种图片格式
               </p>
             </div>
             <div className="text-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">2. 选择地点</h3>
+              <h3 className="text-xl font-semibold mb-2">🗺️ 选个地，到达</h3>
               <p className="text-muted-foreground">
-                在世界地图上选择你想要"到达"的地点，或者搜索具体的地名
+                全球景点，你的远方，想去哪就去哪
               </p>
             </div>
             <div className="text-center">
               <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">3. AI 生成</h3>
+              <h3 className="text-xl font-semibold mb-2">✨ 变大片，创造</h3>
               <p className="text-muted-foreground">
-                AI 将你的照片与选择的地点完美融合，生成专属的旅行大片
+                AI 魔法，你的故事，瞬间穿越时空
               </p>
             </div>
           </div>
@@ -102,27 +102,27 @@ export default function Home() {
       {/* Features */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">功能特性</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">为何独一无二？</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="p-6 border border-border rounded-lg">
-              <Globe className="h-8 w-8 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">全球地点</h3>
+            <div className="p-6 border border-border rounded-lg text-center">
+              <Globe className="h-8 w-8 text-primary mb-4 mx-auto" />
+              <h3 className="text-xl font-semibold mb-2">📍全球地点</h3>
               <p className="text-muted-foreground">
-                支持全球任意地点选择，从著名景点到隐秘角落
+                支持上千个全球热门旅行打卡点
               </p>
             </div>
-            <div className="p-6 border border-border rounded-lg">
-              <Zap className="h-8 w-8 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">快速生成</h3>
+            <div className="p-6 border border-border rounded-lg text-center">
+              <Zap className="h-8 w-8 text-primary mb-4 mx-auto" />
+              <h3 className="text-xl font-semibold mb-2">⚡快速生成</h3>
               <p className="text-muted-foreground">
                 AI 快速处理，30秒内生成高质量旅行照片
               </p>
             </div>
-            <div className="p-6 border border-border rounded-lg">
-              <Users className="h-8 w-8 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">免费使用</h3>
+            <div className="p-6 border border-border rounded-lg text-center">
+              <Users className="h-8 w-8 text-primary mb-4 mx-auto" />
+              <h3 className="text-xl font-semibold mb-2">🎁免费使用</h3>
               <p className="text-muted-foreground">
-                每日3次免费生成额度，无水印，标准质量输出
+                每日3次免费机会，无水印，直接下载
               </p>
             </div>
           </div>
@@ -132,9 +132,9 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-primary text-primary-foreground">
         <div className="container mx-auto text-center max-w-2xl">
-          <h2 className="text-3xl font-bold mb-4">开始你的AI旅行之旅</h2>
+          <h2 className="text-3xl font-bold mb-4">生成你的第一张 AI 旅行大片</h2>
           <p className="text-xl mb-8 opacity-90">
-            创造"在场"，成为创意表达与超现实时空穿越的首选工具
+            距离，只是一个概念，真正的旅行，发生在内心。
           </p>
           <Button size="lg" variant="secondary" asChild>
             <Link href="/auth/signin">免费开始创作</Link>

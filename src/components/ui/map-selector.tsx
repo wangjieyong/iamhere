@@ -225,9 +225,9 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
       <div className="space-y-4 h-[400px] flex flex-col">
         {/* 标题 */}
         <div className="space-y-2 flex-shrink-0">
-          <label className="text-sm font-medium">选择地理位置</label>
+          <label className="text-sm font-medium">选择地点</label>
           <p className="text-xs text-muted-foreground">
-            选择您想要展示的地点位置
+            在地图上选择任意城市或地标，想去哪就去哪
           </p>
         </div>
 
@@ -288,7 +288,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                             type="text"
                             value={searchQuery}
                             onChange={(e) => handleSearchInputChange(e.target.value)}
-                            placeholder="试试输入纽约自由女神像、巴黎埃菲尔铁塔"
+                            placeholder="试试输入纽约、东京、巴黎、北京"
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                             onFocus={() => searchQuery && setShowSuggestions(true)}
