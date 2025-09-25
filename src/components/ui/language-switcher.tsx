@@ -16,7 +16,7 @@ export function LanguageSwitcher() {
   // 在hydration完成前显示加载状态，避免闪烁
   if (!isHydrated || !isInitialized) {
     return (
-      <span className="text-gray-400 flex items-center gap-1">
+      <span className="text-sm font-medium text-gray-400 flex items-center gap-1">
         <Image src="/globe.svg" alt="Language" width={16} height={16} />
         EN
       </span>
@@ -26,11 +26,11 @@ export function LanguageSwitcher() {
   return (
     <button
       onClick={toggleLanguage}
-      className="text-gray-700 hover:text-black transition-colors flex items-center gap-1"
+      className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
       title={`Switch to ${locale === 'zh' ? 'English' : '中文'}`}
     >
       <Image src="/globe.svg" alt="Language" width={16} height={16} />
-      {locale === 'zh' ? '中文' : 'EN'}
+      {locale === 'zh' ? 'EN' : '中文'}
     </button>
   );
 }

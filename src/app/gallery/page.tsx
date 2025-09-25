@@ -188,12 +188,6 @@ export default function GalleryPage() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="/create">
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                {t('gallery.newCreation')}
-              </Button>
-            </Link>
             <UserAvatar />
           </div>
         </div>

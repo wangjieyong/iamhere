@@ -130,21 +130,21 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="p-6 border border-border rounded-lg text-center">
               <Globe className="h-8 w-8 text-primary mb-4 mx-auto" />
-              <h3 className="text-xl font-semibold mb-2">📍{t('home.globalLocations')}</h3>
+              <h3 className="text-xl font-semibold mb-2">📍 {t('home.globalLocations')}</h3>
               <p className="text-muted-foreground">
                 {t('home.globalLocationsDesc')}
               </p>
             </div>
             <div className="p-6 border border-border rounded-lg text-center">
               <Zap className="h-8 w-8 text-primary mb-4 mx-auto" />
-              <h3 className="text-xl font-semibold mb-2">⚡{t('home.fastGeneration')}</h3>
+              <h3 className="text-xl font-semibold mb-2">⚡ {t('home.fastGeneration')}</h3>
               <p className="text-muted-foreground">
                 {t('home.fastGenerationDesc')}
               </p>
             </div>
             <div className="p-6 border border-border rounded-lg text-center">
               <Users className="h-8 w-8 text-primary mb-4 mx-auto" />
-              <h3 className="text-xl font-semibold mb-2">🎁{t('home.freeToUse')}</h3>
+              <h3 className="text-xl font-semibold mb-2">🎁 {t('home.freeToUse')}</h3>
               <p className="text-muted-foreground">
                 {t('home.freeToUseDesc')}
               </p>
