@@ -31,14 +31,14 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto text-center max-w-4xl">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
             <span className="text-primary">此刻，身在四方。</span>
           </h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            <span className="text-foreground font-medium">你在这里，世界就在这里。</span>
+          <p className="text-2xl md:text-3xl mb-8 max-w-2xl mx-auto">
+            <span className="text-foreground font-medium">AI 带你环游世界，只需一张自拍。</span>
             <br />
             <br />
-            <span className="text-muted-foreground">只需一张自拍，AI将为你生成身临其境的旅行影像。</span>
+            <span className="text-muted-foreground text-lg md:text-xl">你在哪里，世界就在哪里。</span>
           </p>
           <Button size="lg" asChild className="mb-12">
             <Link href="/auth/signin">立即免费体验</Link>
@@ -74,7 +74,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-2">📸 拍张照，上传</h3>
               <p className="text-muted-foreground">
-                你的瞬间一秒上传，支持多种图片格式
+                你的瞬间，一秒上传，支持多种图片格式
               </p>
             </div>
             <div className="text-center">
