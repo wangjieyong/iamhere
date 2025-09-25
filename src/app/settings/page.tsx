@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { User, Globe, LogOut, Camera, Download, Trash2, Settings as SettingsIcon } from 'lucide-react';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 import { USER_LIMITS } from '@/lib/constants';
+import { useTranslation } from '@/hooks/use-translation';
 
 // 临时内联组件定义，避免导入问题
 const Card = ({ children, className = '', ...props }: any) => (
@@ -92,6 +93,7 @@ interface UserProvider {
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t, locale, setLocale, isHydrated } = useTranslation();
   const [userStats, setUserStats] = useState<UserStats>({
     totalImages: 0,
     dailyUsage: 0,
@@ -121,7 +123,7 @@ export default function SettingsPage() {
         setUserStats(stats);
       }
     } catch (error) {
-      console.error('获取用户统计失败:', error);
+      console.error('Failed to fetch user stats:', error);
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +137,7 @@ export default function SettingsPage() {
         setUserProvider(data.provider);
       }
     } catch (error) {
-      console.error('获取用户provider失败:', error);
+      console.error('Failed to fetch user provider:', error);
     }
   };
 
@@ -145,10 +147,10 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     showConfirm({
-      title: "删除账户",
-      message: "确定要删除账户吗？此操作不可撤销，将删除您的所有数据。",
-      confirmText: "删除账户",
-      cancelText: "取消",
+      title: t('settings.confirmDelete'),
+      message: t('settings.deleteWarning'),
+      confirmText: t('settings.deleteAccount'),
+      cancelText: t('ui.cancel'),
       variant: "destructive",
       onConfirm: async () => {
         try {
@@ -159,11 +161,11 @@ export default function SettingsPage() {
           if (response.ok) {
             await signOut({ callbackUrl: '/' });
           } else {
-            alert('删除账户失败，请稍后重试');
+            alert(t('error.serverError'));
           }
         } catch (error) {
-          console.error('删除账户失败:', error);
-          alert('删除账户失败，请稍后重试');
+          console.error('Failed to delete account:', error);
+          alert(t('error.serverError'));
         }
       }
     });
@@ -193,11 +195,11 @@ export default function SettingsPage() {
               onClick={() => router.back()}
               className="text-muted-foreground hover:text-foreground"
             >
-              ← 返回
+              ← {t('ui.back')}
             </Button>
             <div className="flex items-center space-x-2">
               <SettingsIcon className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">账户设置</h1>
+              <h1 className="text-xl font-semibold">{t('settings.title')}</h1>
             </div>
           </div>
         </div>
@@ -210,10 +212,10 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <User className="h-5 w-5" />
-                <span>个人信息</span>
+                <span>{t('settings.account')}</span>
               </CardTitle>
               <CardDescription>
-                您的基本账户信息
+                {t('settings.accountDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -225,14 +227,14 @@ export default function SettingsPage() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-1">
-                  <h3 className="text-lg font-medium">{session.user.name || '未设置姓名'}</h3>
+                  <h3 className="text-lg font-medium">{session.user.name || t('settings.noName')}</h3>
                   {session.user.email && (
                     <p className="text-muted-foreground">{session.user.email}</p>
                   )}
                   <Badge variant="secondary" className="text-xs">
-                    {userProvider === 'twitter' ? 'Twitter 账户' : 
-                     userProvider === 'google' ? 'Google 账户' : 
-                     '第三方账户'}
+                    {userProvider === 'twitter' ? t('settings.twitterAccount') : 
+                     userProvider === 'google' ? t('settings.googleAccount') : 
+                     t('settings.thirdPartyAccount')}
                   </Badge>
                 </div>
               </div>
@@ -244,31 +246,31 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Camera className="h-5 w-5" />
-                <span>使用统计</span>
+                <span>{t('settings.usageStats')}</span>
               </CardTitle>
               <CardDescription>
-                您的图片生成使用情况
+                {t('settings.usageStatsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold text-primary">{userStats.totalImages}</div>
-                  <div className="text-sm text-muted-foreground">总生成图片</div>
+                  <div className="text-sm text-muted-foreground">{t('settings.totalImages')}</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold text-primary">{userStats.dailyUsage}</div>
-                  <div className="text-sm text-muted-foreground">今日已使用</div>
+                  <div className="text-sm text-muted-foreground">{t('settings.dailyUsed')}</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold text-muted-foreground">{userStats.dailyLimit}</div>
-                  <div className="text-sm text-muted-foreground">每日限额</div>
+                  <div className="text-sm text-muted-foreground">{t('settings.dailyLimit')}</div>
                 </div>
               </div>
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>今日使用进度</span>
+                  <span>{t('settings.dailyProgress')}</span>
                   <span>{userStats.dailyUsage}/{userStats.dailyLimit}</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
@@ -286,28 +288,46 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Globe className="h-5 w-5" />
-                <span>语言设置</span>
+                <span>{t('settings.language')}</span>
               </CardTitle>
               <CardDescription>
-                选择您的首选语言
+                {t('settings.languageDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 border rounded-lg bg-primary/5 border-primary">
-                  <div>
-                    <div className="font-medium">简体中文</div>
+                <button
+                  onClick={() => setLocale('zh')}
+                  className={`w-full flex items-center justify-between p-3 border rounded-lg transition-colors ${
+                    locale === 'zh' 
+                      ? 'bg-primary/5 border-primary' 
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-left">
+                    <div className="font-medium">{t('settings.simplifiedChinese')}</div>
                     <div className="text-sm text-muted-foreground">Simplified Chinese</div>
                   </div>
-                  <Badge variant="default">当前</Badge>
-                </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg opacity-50">
-                  <div>
-                    <div className="font-medium">English</div>
+                  {locale === 'zh' && (
+                    <Badge variant="default">{t('settings.current')}</Badge>
+                  )}
+                </button>
+                <button
+                  onClick={() => setLocale('en')}
+                  className={`w-full flex items-center justify-between p-3 border rounded-lg transition-colors ${
+                    locale === 'en' 
+                      ? 'bg-primary/5 border-primary' 
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="text-left">
+                    <div className="font-medium">{t('settings.english')}</div>
                     <div className="text-sm text-muted-foreground">English (US)</div>
                   </div>
-                  <Badge variant="outline">即将推出</Badge>
-                </div>
+                  {locale === 'en' && (
+                    <Badge variant="default">{t('settings.current')}</Badge>
+                  )}
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -315,9 +335,9 @@ export default function SettingsPage() {
           {/* 快捷操作卡片 */}
           <Card>
             <CardHeader>
-              <CardTitle>快捷操作</CardTitle>
+              <CardTitle>{t('settings.quickActions')}</CardTitle>
               <CardDescription>
-                常用功能的快速访问
+                {t('settings.quickActionsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -327,7 +347,7 @@ export default function SettingsPage() {
                 onClick={() => router.push('/gallery')}
               >
                 <Download className="h-4 w-4 mr-2" />
-                查看我的图库
+                {t('settings.viewGallery')}
               </Button>
               <Button
                 variant="outline"
@@ -335,7 +355,7 @@ export default function SettingsPage() {
                 onClick={() => router.push('/create')}
               >
                 <Camera className="h-4 w-4 mr-2" />
-                创建新图片
+                {t('settings.createNew')}
               </Button>
             </CardContent>
           </Card>
@@ -345,9 +365,9 @@ export default function SettingsPage() {
           {/* 账户操作卡片 */}
           <Card className="border-destructive/20">
             <CardHeader>
-              <CardTitle className="text-destructive">账户操作</CardTitle>
+              <CardTitle className="text-destructive">{t('settings.accountActions')}</CardTitle>
               <CardDescription>
-                退出登录或删除账户
+                {t('settings.accountActionsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -357,7 +377,7 @@ export default function SettingsPage() {
                 onClick={handleSignOut}
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                退出登录
+                {t('ui.logout')}
               </Button>
               <Button
                 variant="destructive"
@@ -365,7 +385,7 @@ export default function SettingsPage() {
                 onClick={handleDeleteAccount}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                删除账户
+                {t('settings.deleteAccount')}
               </Button>
             </CardContent>
           </Card>

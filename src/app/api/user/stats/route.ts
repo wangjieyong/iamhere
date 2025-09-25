@@ -3,13 +3,16 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { USER_LIMITS } from '@/lib/constants';
+import { AppError, ErrorCode, createErrorResponse, logError } from '@/lib/error-handler';
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: '未授权' }, { status: 401 });
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'Unauthorized access', 401)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 401 })
     }
 
     // 获取用户信息
@@ -22,7 +25,9 @@ export async function GET() {
     });
 
     if (!user) {
-      return NextResponse.json({ error: '用户不存在' }, { status: 404 });
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'User not found', 404)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 404 })
     }
 
     // 计算总生成图片数
@@ -48,10 +53,10 @@ export async function GET() {
 
   } catch (error: unknown) {
     console.error('获取用户统计失败:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json(
-      { error: '服务器错误', details: errorMessage },
-      { status: 500 }
-    );
+    logError(error as Error, { endpoint: '/api/user/stats' })
+    
+    const serverError = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, 'Server error', 500)
+    const errorResponse = createErrorResponse(serverError, 'zh')
+    return NextResponse.json(errorResponse, { status: 500 })
   }
 }

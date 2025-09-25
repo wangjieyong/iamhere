@@ -2,15 +2,15 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { AppError, ErrorCode, createErrorResponse, logError } from '@/lib/error-handler'
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'Unauthorized access', 401)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 401 })
     }
 
     // 首先获取用户信息
@@ -19,10 +19,9 @@ export async function GET() {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'User not found', 404)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 404 })
     }
 
     const userImages = await prisma.generatedImage.findMany({
@@ -50,13 +49,10 @@ export async function GET() {
 
   } catch (error: unknown) {
     console.error('Gallery API error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json(
-      { 
-        error: "Failed to fetch gallery",
-        details: errorMessage 
-      },
-      { status: 500 }
-    )
+    logError(error as Error, { endpoint: '/api/gallery' })
+    
+    const serverError = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, 'Server error', 500)
+    const errorResponse = createErrorResponse(serverError, 'zh')
+    return NextResponse.json(errorResponse, { status: 500 })
   }
 }

@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react"
 import { MapPin, Search, Loader2, Navigation } from "lucide-react"
 import { Button } from "./button"
 import { geocodeSearch, reverseGeocode, MAPBOX_CONFIG, isMapboxConfigured } from "@/lib/mapbox"
+import { t } from "@/lib/i18n"
 
 // 动态导入 Mapbox GL JS
 let mapboxgl: typeof import('mapbox-gl').default | null = null
@@ -67,7 +68,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
         })
       }
     } catch (error) {
-      console.error('搜索失败:', error)
+      console.error('Search failed:', error)
       setSearchResults([])
     } finally {
       setIsSearching(false)
@@ -118,7 +119,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
   // 获取当前位置
   const getCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      alert('您的浏览器不支持地理定位')
+      alert(t('map.geolocationNotSupported'))
       return
     }
 
@@ -132,16 +133,16 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
               lat: latitude,
               lng: longitude,
               address: result?.place_name || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
-              name: '当前位置'
+              name: t('map.currentLocation')
             }
             onLocationSelect(location)
           } catch (error) {
-            console.error('获取地址失败:', error)
+            console.error('Failed to get address:', error)
             const location: Location = {
               lat: latitude,
               lng: longitude,
               address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
-              name: '当前位置'
+              name: t('map.currentLocation')
             }
             onLocationSelect(location)
           } finally {
@@ -149,9 +150,9 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
           }
         },
       (error) => {
-        console.error('定位失败:', error)
+        console.error('Geolocation failed:', error)
         setIsGettingLocation(false)
-        alert('定位失败，请检查位置权限设置')
+        alert(t('map.geolocationFailed'))
       },
       {
         enableHighAccuracy: true,
@@ -190,16 +191,16 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
             lat,
             lng,
             address: result?.place_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-            name: '地图选点'
+            name: t('map.mapSelection')
           }
           onLocationSelect(location)
         } catch (error) {
-          console.error('获取地址失败:', error)
+          console.error('Failed to get address:', error)
           const location: Location = {
             lat,
             lng,
             address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-            name: '地图选点'
+            name: t('map.mapSelection')
           }
           onLocationSelect(location)
         }
@@ -225,9 +226,9 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
       <div className="space-y-4 h-[400px] flex flex-col">
         {/* 标题 */}
         <div className="space-y-2 flex-shrink-0">
-          <label className="text-sm font-medium">选择地点</label>
+          <label className="text-sm font-medium">{t('map.selectLocation')}</label>
           <p className="text-xs text-muted-foreground">
-            在地图上选择任意城市或地标，想去哪就去哪
+            {t('map.selectLocationDesc')}
           </p>
         </div>
 
@@ -248,7 +249,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                     }`}
                   >
                     <Search className="h-4 w-4" />
-                    <span>搜索</span>
+                    <span>{t('map.search')}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('map')}
@@ -259,7 +260,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                     }`}
                   >
                     <MapPin className="h-4 w-4" />
-                    <span>地图</span>
+                    <span>{t('map.map')}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('location')}
@@ -270,7 +271,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                     }`}
                   >
                     <Navigation className="h-4 w-4" />
-                    <span>定位</span>
+                    <span>{t('map.location')}</span>
                   </button>
                 </div>
               </div>
@@ -288,7 +289,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                             type="text"
                             value={searchQuery}
                             onChange={(e) => handleSearchInputChange(e.target.value)}
-                            placeholder="试试输入纽约、东京、巴黎、北京"
+                            placeholder={t('map.searchPlaceholder')}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                             onFocus={() => searchQuery && setShowSuggestions(true)}
@@ -319,7 +320,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                           {isSearching ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
                           ) : (
-                            '搜索'
+                            t('map.search')
                           )}
                         </Button>
                       </div>
@@ -328,7 +329,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                     {/* 搜索结果 */}
                     {searchResults.length > 0 && (
                       <div className="space-y-2 flex-1 overflow-y-auto">
-                        <div className="text-xs text-gray-500 mb-2">搜索结果 ({searchResults.length})</div>
+                        <div className="text-xs text-gray-500 mb-2">{t('map.searchResults')} ({searchResults.length})</div>
                         {searchResults.map((result, index) => (
                           <div
                             key={index}
@@ -355,8 +356,8 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                     {searchResults.length === 0 && !isSearching && searchQuery && (
                       <div className="text-center text-gray-500 py-8">
                         <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p>未找到相关地点</p>
-                        <p className="text-xs mt-1">请尝试其他关键词或检查拼写</p>
+                        <p>{t('map.noResults')}</p>
+                        <p className="text-xs mt-1">{t('map.noResultsTip')}</p>
                       </div>
                     )}
                     
@@ -366,7 +367,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                         {/* 搜索历史 */}
                         {searchHistory.length > 0 && (
                           <div>
-                            <div className="text-xs text-gray-500 mb-2">最近搜索</div>
+                            <div className="text-xs text-gray-500 mb-2">{t('map.recentSearches')}</div>
                             <div className="space-y-1">
                               {searchHistory.map((item, index) => (
                                 <div
@@ -387,7 +388,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                         {/* 搜索提示 */}
                         <div className="text-center text-gray-500 py-4">
                           <Search className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                          <p className="text-xs">支持搜索全球城市、著名景点、地标建筑、详细地址等</p>
+                          <p className="text-xs">{t('map.searchTip')}</p>
                         </div>
                       </div>
                     )}
@@ -406,12 +407,12 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                       <div className="w-full flex-1 rounded-md border border-gray-300 flex items-center justify-center bg-gray-50">
                         <div className="text-center text-gray-500">
                           <MapPin className="h-8 w-8 mx-auto mb-2" />
-                          <p className="text-sm">地图功能需要配置 Mapbox</p>
+                          <p className="text-sm">{t('map.mapboxRequired')}</p>
                         </div>
                       </div>
                     )}
                     <div className="text-center text-gray-500 text-sm">
-                      点击地图上的任意位置选择地点
+                      {t('map.clickMapToSelect')}
                     </div>
                   </div>
                 )}
@@ -429,17 +430,17 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                         {isGettingLocation ? (
                           <>
                             <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                            获取位置中...
+                            {t('map.gettingLocation')}
                           </>
                         ) : (
                           <>
                             <Navigation className="h-4 w-4 mr-2" />
-                            获取当前位置
+                            {t('map.getCurrentLocation')}
                           </>
                         )}
                       </Button>
                       <div className="text-gray-500 text-sm">
-                        点击按钮获取您的当前地理位置
+                        {t('map.locationTip')}
                       </div>
                     </div>
                   </div>
@@ -460,7 +461,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                       // 判断地址是否为坐标格式（如 "39.904825, 116.395040"）
                       const isCoordinateFormat = /^\d+\.\d+,\s*\d+\.\d+$/.test(selectedLocation.address)
                       
-                      if (selectedLocation.name && selectedLocation.name !== '地图选点') {
+                      if (selectedLocation.name && selectedLocation.name !== t('map.mapSelection')) {
                         // 有有效的地点名称
                         return (
                           <>
@@ -472,8 +473,8 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                         // 地址是坐标格式，显示友好信息
                         return (
                           <>
-                            <div className="font-medium text-green-900 mb-1">已选择位置</div>
-                            <div className="text-sm text-green-700 mb-2">地图选点位置</div>
+                            <div className="font-medium text-green-900 mb-1">{t('map.locationSelected')}</div>
+                            <div className="text-sm text-green-700 mb-2">{t('map.mapSelectionLocation')}</div>
                           </>
                         )
                       } else {
@@ -481,13 +482,13 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                         return (
                           <>
                             <div className="font-medium text-green-900 mb-1">{selectedLocation.address}</div>
-                            <div className="text-sm text-green-700 mb-2">地图选择位置</div>
+                            <div className="text-sm text-green-700 mb-2">{t('map.mapSelectedLocation')}</div>
                           </>
                         )
                       }
                     })()}
                     <div className="text-xs text-green-600">
-                      坐标: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                      {t('map.coordinates')}: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
                     </div>
                   </div>
                 </div>
@@ -501,7 +502,7 @@ export function MapSelector({ onLocationSelect, selectedLocation }: MapSelectorP
                onClick={() => onLocationSelect(null)}
                className="w-full"
              >
-               重新选择地点
+               {t('map.reselectLocation')}
              </Button>
           </div>
         )}

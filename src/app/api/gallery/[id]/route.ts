@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { deleteImage } from "@/lib/storage"
+import { AppError, ErrorCode, createErrorResponse, logError } from "@/lib/error-handler"
+import { Prisma } from "@prisma/client"
 
 export async function DELETE(
   request: NextRequest,
@@ -16,10 +18,9 @@ export async function DELETE(
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       console.log(`[DELETE IMAGE] Unauthorized access attempt for image ID: ${imageId}`)
-      return NextResponse.json(
-        { error: "未授权访问" },
-        { status: 401 }
-      )
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'Unauthorized access', 401)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 401 })
     }
 
     console.log(`[DELETE IMAGE] User authenticated:`, {
@@ -34,10 +35,9 @@ export async function DELETE(
 
     if (!user) {
       console.log(`[DELETE IMAGE] User not found for ID: ${session.user.id}`)
-      return NextResponse.json(
-        { error: "用户不存在" },
-        { status: 404 }
-      )
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'User not found', 404)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 404 })
     }
 
     console.log(`[DELETE IMAGE] User found: ${user.id}`)
@@ -52,16 +52,15 @@ export async function DELETE(
 
     if (!image) {
       console.log(`[DELETE IMAGE] Image not found or not owned by user. Image ID: ${imageId}, User ID: ${user.id}`)
-      return NextResponse.json(
-        { error: "图片不存在或无权限删除" },
-        { status: 404 }
-      )
+      const error = new AppError(ErrorCode.FORBIDDEN, 'Image not found or permission denied', 404)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 404 })
     }
 
     console.log(`[DELETE IMAGE] Image found: ${image.imageUrl}`)
 
     // 使用事务确保数据一致性
-    await prisma.$transaction(async (tx: any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 删除数据库记录
       await tx.generatedImage.delete({
         where: { id: imageId }
@@ -90,19 +89,15 @@ export async function DELETE(
 
   } catch (error) {
     console.error(`[DELETE IMAGE] Error deleting image ID: ${imageId}`, error)
+    logError(error as Error, { endpoint: '/api/gallery/[id]', imageId })
     
-    // 提供更具体的错误信息
-    let errorMessage = "删除图片时发生错误"
-    if (error instanceof Error) {
-      errorMessage = error.message
+    if (error instanceof AppError) {
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: error.statusCode })
     }
-
-    return NextResponse.json(
-      { 
-        error: errorMessage,
-        details: "请稍后重试，如果问题持续存在请联系支持"
-      },
-      { status: 500 }
-    )
+    
+    const serverError = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, 'Failed to delete image', 500)
+    const errorResponse = createErrorResponse(serverError, 'zh')
+    return NextResponse.json(errorResponse, { status: 500 })
   }
 }

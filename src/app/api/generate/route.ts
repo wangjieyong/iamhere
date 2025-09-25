@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { AppError, ErrorCode, createErrorResponse, logError } from "@/lib/error-handler"
+import { AppError, ErrorCode, createErrorResponse, logError, validators } from "@/lib/error-handler"
 import { generateImage, checkGeminiAvailability, ImageGenerationRequest } from "@/lib/gemini"
 import { Prisma } from "@prisma/client"
 import { USER_LIMITS } from "@/lib/constants"
@@ -26,10 +26,9 @@ export async function POST(request: NextRequest) {
     // 检查用户认证
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "未授权访问" },
-        { status: 401 }
-      )
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'Authentication required', 401)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 401 })
     }
 
     let user: User | null = null
@@ -43,10 +42,9 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       console.log('User not found in database:', session.user.id)
-      return NextResponse.json(
-        { error: "用户不存在" },
-        { status: 400 }
-      )
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'User not found', 404)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 404 })
     } else {
       console.log('User found:', user.id)
     }
@@ -64,10 +62,9 @@ export async function POST(request: NextRequest) {
     const currentUsageCount = todayUsage?.count || 0
 
     if (currentUsageCount >= USER_LIMITS.DAILY_GENERATION_LIMIT) {
-      return NextResponse.json(
-        { error: `今日生成次数已达上限（${USER_LIMITS.DAILY_GENERATION_LIMIT}次），请明天再试` },
-        { status: 429 }
-      )
+      const error = new AppError(ErrorCode.DAILY_LIMIT_EXCEEDED, 'Daily limit exceeded', 429)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 429 })
     }
 
     // 解析请求数据
@@ -75,11 +72,16 @@ export async function POST(request: NextRequest) {
     const imageFile = formData.get("image") as File
     const locationData = formData.get("location") as string
 
-    if (!imageFile || !locationData) {
-      return NextResponse.json(
-        { error: "图片和位置信息是必需的" },
-        { status: 400 }
-      )
+    if (!imageFile) {
+      const error = new AppError(ErrorCode.INVALID_IMAGE_FORMAT, 'Image file is required', 400)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 400 })
+    }
+
+    if (!locationData) {
+      const error = new AppError(ErrorCode.LOCATION_REQUIRED, 'Location data is required', 400)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 400 })
     }
 
     let location
@@ -87,52 +89,38 @@ export async function POST(request: NextRequest) {
       // 先检查locationData是否为空或无效
       if (!locationData || typeof locationData !== 'string') {
         console.log('Invalid location data type:', typeof locationData, locationData)
-        return NextResponse.json(
-          { error: "位置信息格式错误" },
-          { status: 400 }
-        )
+        const error = new AppError(ErrorCode.LOCATION_REQUIRED, 'Invalid location data format', 400)
+        const errorResponse = createErrorResponse(error, 'zh')
+        return NextResponse.json(errorResponse, { status: 400 })
       }
 
       // 尝试解析JSON，如果失败则提供更详细的错误信息
       location = JSON.parse(locationData)
       console.log('Parsed location:', location)
       
-      // 验证必需的字段
-      if (!location || typeof location !== 'object') {
-        console.log('Location is not an object:', location)
-        return NextResponse.json(
-          { error: "位置信息格式错误" },
-          { status: 400 }
-        )
-      }
+      // 使用验证器验证位置数据
+      validators.validateLocation(location)
       
-      if (!location.lat || !location.lng || !location.address) {
-        console.log('Missing required location fields:', {
-          lat: location.lat,
-          lng: location.lng,
-          address: location.address
-        })
-        return NextResponse.json(
-          { error: "位置信息缺少必需字段" },
-          { status: 400 }
-        )
-      }
     } catch (error) {
       console.error('Failed to parse location data:', error)
       console.log('Raw location data:', locationData)
-      return NextResponse.json(
-        { error: "位置信息格式错误" },
-        { status: 400 }
-      )
+      
+      if (error instanceof AppError) {
+        const errorResponse = createErrorResponse(error, 'zh')
+        return NextResponse.json(errorResponse, { status: error.statusCode })
+      }
+      
+      const locationError = new AppError(ErrorCode.LOCATION_REQUIRED, 'Invalid location data format', 400)
+      const errorResponse = createErrorResponse(locationError, 'zh')
+      return NextResponse.json(errorResponse, { status: 400 })
     }
 
     // 检查Gemini API可用性
     const geminiAvailable = await checkGeminiAvailability()
     if (!geminiAvailable) {
-      return NextResponse.json(
-        { error: "AI服务暂时不可用，请稍后再试" },
-        { status: 503 }
-      )
+      const error = new AppError(ErrorCode.AI_SERVICE_ERROR, 'AI service temporarily unavailable', 503)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 503 })
     }
 
     // 将文件转换为base64

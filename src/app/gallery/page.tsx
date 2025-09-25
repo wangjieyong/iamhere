@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { UserAvatar } from "@/components/ui/user-avatar"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { useTranslation } from "@/hooks/use-translation"
 
 interface GeneratedImage {
   id: string
@@ -23,6 +24,7 @@ interface GeneratedImage {
 export default function GalleryPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { t } = useTranslation()
   
   const [images, setImages] = useState<GeneratedImage[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -60,11 +62,11 @@ export default function GalleryPage() {
 
   // 如果未登录，显示加载状态
   if (status === "loading") {
-    return <Loading text="正在加载..." />
+    return <Loading text={t('gallery.loading')} />
   }
 
   if (status === "unauthenticated") {
-    return <Loading text="正在跳转到登录页面..." />
+    return <Loading text={t('gallery.redirecting')} />
   }
 
   const handleDownload = async (image: GeneratedImage) => {
@@ -88,8 +90,8 @@ export default function GalleryPage() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "我的AI旅行图片",
-          text: `在${image.location}的AI旅行体验`,
+          title: t('gallery.shareTitle'),
+          text: `${t('gallery.shareText')} ${image.location}`,
           url: `${window.location.origin}/gallery/${image.id}`,
         })
       } catch (error) {
@@ -98,16 +100,16 @@ export default function GalleryPage() {
     } else {
       // 复制链接到剪贴板
       navigator.clipboard.writeText(`${window.location.origin}/gallery/${image.id}`)
-      alert("链接已复制到剪贴板")
+      alert(t('gallery.linkCopied'))
     }
   }
 
   const handleDelete = async (image: GeneratedImage) => {
     showConfirm({
-      title: "删除图片",
-      message: "确定要删除这张图片吗？此操作无法撤销。",
-      confirmText: "删除",
-      cancelText: "取消",
+      title: t('gallery.deleteTitle'),
+      message: t('gallery.deleteMessage'),
+      confirmText: t('gallery.deleteConfirm'),
+      cancelText: t('gallery.deleteCancel'),
       variant: "destructive",
       onConfirm: async () => {
         setIsDeleting(image.id)
@@ -134,14 +136,14 @@ export default function GalleryPage() {
             }
           } else {
             // 处理不同的错误状态
-            let errorMessage = "删除失败，请稍后重试"
+            let errorMessage = t('gallery.deleteFailed')
             
             if (response.status === 401) {
-              errorMessage = "请先登录后再删除图片"
+              errorMessage = t('gallery.deleteLoginRequired')
             } else if (response.status === 404) {
-              errorMessage = data.error || "图片不存在或已被删除"
+              errorMessage = data.error || t('gallery.imageNotFound')
             } else if (response.status === 500) {
-              errorMessage = data.error || "服务器错误，请稍后重试"
+              errorMessage = data.error || t('error.serverError')
             } else if (data.error) {
               errorMessage = data.error
             }
@@ -153,9 +155,9 @@ export default function GalleryPage() {
           console.error(`[FRONTEND] Delete error for image ${image.id}:`, error)
           
           // 网络错误或其他异常
-          let errorMessage = "删除失败，请检查网络连接后重试"
+          let errorMessage = t('gallery.deleteNetworkError')
           if (error instanceof Error) {
-            errorMessage = `删除失败：${error.message}`
+            errorMessage = `${t('gallery.deleteFailed')}: ${error.message}`
           }
           
           alert(errorMessage)
@@ -167,7 +169,7 @@ export default function GalleryPage() {
   }
 
   if (isLoading) {
-    return <Loading text="正在加载图库..." />
+    return <Loading text={t('gallery.loadingGallery')} />
   }
 
   return (
@@ -178,18 +180,18 @@ export default function GalleryPage() {
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
               <ArrowLeft className="h-5 w-5" />
-              <span className="text-sm">返回首页</span>
+              <span className="text-sm">{t('gallery.backToHome')}</span>
             </Link>
             <div className="flex items-center space-x-2">
               <Camera className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">我的图库</span>
+              <span className="font-semibold text-lg">{t('gallery.myGallery')}</span>
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/create">
               <Button size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                新建创作
+                {t('gallery.newCreation')}
               </Button>
             </Link>
             <UserAvatar />
@@ -205,14 +207,14 @@ export default function GalleryPage() {
               <div className="p-6 bg-accent/50 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
                 <Camera className="h-12 w-12 text-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-semibold mb-4">还没有创作作品</h2>
+              <h2 className="text-2xl font-semibold mb-4">{t('gallery.noWorks')}</h2>
               <p className="text-muted-foreground mb-8">
-                开始你的第一次AI旅行创作，生成独特的旅行场景图片
+                {t('gallery.startFirstCreation')}
               </p>
               <Link href="/create">
                 <Button size="lg">
                   <Plus className="h-5 w-5 mr-2" />
-                  开始创作
+                  {t('gallery.startCreating')}
                 </Button>
               </Link>
             </div>
@@ -222,9 +224,9 @@ export default function GalleryPage() {
           <div>
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-3xl font-bold">我的AI旅行作品</h1>
+                <h1 className="text-3xl font-bold">{t('gallery.myAIWorks')}</h1>
                 <p className="text-muted-foreground mt-2">
-                  共 {images.length} 张作品
+                  {t('gallery.totalWorks')} {images.length} {t('gallery.worksUnit')}
                 </p>
               </div>
             </div>
@@ -242,7 +244,7 @@ export default function GalleryPage() {
                   >
                     <img
                       src={image.imageUrl}
-                      alt={`AI生成图片 - ${image.location}`}
+                      alt={`${t('gallery.aiGeneratedImage')} - ${image.location}`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />
                   </div>
@@ -269,7 +271,7 @@ export default function GalleryPage() {
                           handleDownload(image)
                         }}
                         className="p-2 bg-background/80 hover:bg-background rounded-full"
-                        title="下载"
+                        title={t('gallery.download')}
                       >
                         <Download className="h-4 w-4" />
                       </button>
@@ -279,7 +281,7 @@ export default function GalleryPage() {
                           handleShare(image)
                         }}
                         className="p-2 bg-background/80 hover:bg-background rounded-full"
-                        title="分享"
+                        title={t('gallery.share')}
                       >
                         <Share2 className="h-4 w-4" />
                       </button>
@@ -290,7 +292,7 @@ export default function GalleryPage() {
                         }}
                         disabled={isDeleting === image.id}
                         className="p-2 bg-background/80 hover:bg-background rounded-full text-destructive"
-                        title="删除"
+                        title={t('gallery.delete')}
                       >
                         {isDeleting === image.id ? (
                           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -322,7 +324,7 @@ export default function GalleryPage() {
               <div className="lg:w-2/3">
                 <img
                   src={selectedImage.imageUrl}
-                  alt={`AI生成图片 - ${selectedImage.location}`}
+                  alt={`${t('gallery.aiGeneratedImage')} - ${selectedImage.location}`}
                   className="w-full h-auto"
                 />
               </div>
@@ -330,7 +332,7 @@ export default function GalleryPage() {
               {/* 详情 */}
               <div className="lg:w-1/3 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">作品详情</h3>
+                  <h3 className="text-lg font-semibold">{t('gallery.workDetails')}</h3>
                   <button
                     onClick={() => setSelectedImage(null)}
                     className="p-1 hover:bg-accent rounded"
@@ -341,17 +343,17 @@ export default function GalleryPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">地点</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('gallery.location')}</label>
                     <p className="text-sm">{selectedImage.location}</p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">创作时间</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('gallery.creationTime')}</label>
                     <p className="text-sm">{new Date(selectedImage.createdAt).toLocaleString()}</p>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">AI提示词</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t('gallery.aiPrompt')}</label>
                     <p className="text-sm text-muted-foreground">{selectedImage.prompt}</p>
                   </div>
 
@@ -363,7 +365,7 @@ export default function GalleryPage() {
                       className="flex-1"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      下载
+                      {t('gallery.download')}
                     </Button>
                     <Button
                       onClick={() => handleShare(selectedImage)}
@@ -372,7 +374,7 @@ export default function GalleryPage() {
                       className="flex-1"
                     >
                       <Share2 className="h-4 w-4 mr-2" />
-                      分享
+                      {t('gallery.share')}
                     </Button>
                   </div>
                 </div>

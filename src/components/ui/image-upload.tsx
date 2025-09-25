@@ -5,6 +5,7 @@ import { Upload, X, Image as ImageIcon } from "lucide-react"
 import { Button } from "./button"
 import { validateImageFile } from "@/lib/utils"
 import { FILE_LIMITS } from "@/lib/constants"
+import { t } from "@/lib/i18n"
 
 interface ImageUploadProps {
   onImageSelect: (file: File) => void
@@ -32,13 +33,13 @@ export function ImageUpload({
     
     // 检查文件大小
     if (file.size > maxSize * 1024 * 1024) {
-      setError(`文件大小不能超过 ${maxSize}MB`)
+      setError(`${t('upload.fileSizeError')} ${maxSize}MB`)
       return
     }
     
     const validation = validateImageFile(file)
     if (!validation.isValid) {
-      setError(validation.error || "文件验证失败")
+      setError(validation.error || t('upload.validationFailed'))
       return
     }
 
@@ -99,9 +100,9 @@ export function ImageUpload({
   return (
     <div className="space-y-4 h-[400px] flex flex-col">
       <div className="space-y-2 flex-shrink-0">
-        <label className="text-sm font-medium">上传图片</label>
+        <label className="text-sm font-medium">{t('upload.title')}</label>
         <p className="text-xs text-muted-foreground">
-          上传一张图片，AI将基于此图片和地理位置生成新的旅行场景
+          {t('upload.description')}
         </p>
       </div>
 
@@ -126,10 +127,10 @@ export function ImageUpload({
             </div>
             <div className="space-y-2">
               <p className="text-sm font-medium">
-                {isDragging ? "释放文件以上传" : "点击或拖拽图片到此处"}
+                {isDragging ? t('upload.dropToUpload') : t('upload.dragDrop')}
               </p>
               <p className="text-xs text-muted-foreground">
-                支持 JPG、PNG、WebP 格式，最大 {maxSize}MB
+                {t('upload.supportedFormats')} {maxSize}MB
               </p>
             </div>
           </div>
@@ -151,7 +152,7 @@ export function ImageUpload({
               {preview ? (
                 <img
                   src={preview}
-                  alt="预览图片"
+                  alt={t('upload.previewImage')}
                   className="w-full h-full object-contain"
                 />
               ) : (
@@ -177,7 +178,7 @@ export function ImageUpload({
             onClick={openFileSelector}
             className="w-full"
           >
-            重新选择图片
+            {t('upload.selectAgain')}
           </Button>
           
           <input

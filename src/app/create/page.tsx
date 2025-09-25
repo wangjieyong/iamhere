@@ -10,6 +10,7 @@ import { Loading, LoadingOverlay } from "@/components/ui/loading"
 import { ImageUpload } from "@/components/ui/image-upload"
 import { MapSelector } from "@/components/ui/map-selector"
 import { UserAvatar } from "@/components/ui/user-avatar"
+import { useTranslation } from "@/hooks/use-translation"
 
 interface Location {
   lat: number
@@ -30,6 +31,7 @@ interface GeneratedImage {
 export default function CreatePage() {
   const { status } = useSession()
   const router = useRouter()
+  const { t } = useTranslation()
   
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
@@ -46,11 +48,11 @@ export default function CreatePage() {
 
   // 如果未登录，显示加载状态
   if (status === "loading") {
-    return <Loading text="正在加载..." />
+    return <Loading text={t('create.loading')} />
   }
 
   if (status === "unauthenticated") {
-    return <Loading text="正在跳转到登录页面..." />
+    return <Loading text={t('create.redirecting')} />
   }
 
   const handleImageSelect = (file: File) => {
@@ -69,7 +71,7 @@ export default function CreatePage() {
 
   const handleGenerate = async () => {
     if (!selectedImage || !selectedLocation) {
-      setError("请上传图片并选择地理位置")
+      setError(t('create.uploadAndSelect'))
       return
     }
 
@@ -79,7 +81,7 @@ export default function CreatePage() {
     try {
       // 验证selectedImage是否为有效的File对象
       if (!(selectedImage instanceof File)) {
-        throw new Error("选择的图片格式无效，请重新上传")
+        throw new Error(t('create.invalidFormat'))
       }
 
       // 创建 FormData 用于文件上传
@@ -95,22 +97,22 @@ export default function CreatePage() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error("请先登录后再使用图片生成功能")
+          throw new Error(t('create.loginRequired'))
         } else if (response.status === 429) {
-          throw new Error("今日使用次数已达上限，请明天再试")
+          throw new Error(t('create.dailyLimitReached'))
         } else if (response.status === 400) {
           const errorData = await response.json()
-          throw new Error(errorData.error || "请求参数错误")
+          throw new Error(errorData.error || t('error.invalidImage'))
         } else if (response.status === 503) {
           const errorData = await response.json()
-          throw new Error(errorData.error || "服务暂时不可用，请稍后重试")
+          throw new Error(errorData.error || t('error.serverError'))
         } else {
           // 尝试获取服务器返回的具体错误信息
           try {
             const errorData = await response.json()
-            throw new Error(errorData.error || "生成失败，请稍后重试")
+            throw new Error(errorData.error || t('error.unknownError'))
           } catch {
-            throw new Error("生成失败，请稍后重试")
+            throw new Error(t('error.unknownError'))
           }
         }
       }
@@ -128,7 +130,7 @@ export default function CreatePage() {
 
     } catch (error) {
       console.error("Generation error:", error)
-      setError(error instanceof Error ? error.message : "生成失败，请稍后重试")
+      setError(error instanceof Error ? error.message : t('error.unknownError'))
     } finally {
       setIsGenerating(false)
     }
@@ -143,13 +145,14 @@ export default function CreatePage() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = `iamhere-${generatedImage.id}.jpg`
+      a.download = `iamhere-${generatedImage.location.name}-${Date.now()}.jpg`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (error) {
       console.error("Download error:", error)
+      setError(t('create.downloadFailed'))
     }
   }
 
@@ -170,11 +173,11 @@ export default function CreatePage() {
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
               <ArrowLeft className="h-5 w-5" />
-              <span className="text-sm">返回首页</span>
+              <span className="text-sm">{t('create.backToHome')}</span>
             </Link>
             <div className="flex items-center space-x-2">
               <Camera className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">AI创作工坊</span>
+              <span className="font-semibold text-lg">{t('create.workshop')}</span>
             </div>
           </div>
           <UserAvatar />
@@ -182,40 +185,54 @@ export default function CreatePage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {/* 主标题 */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {t('create.title')}
+          </h1>
+          <p className="text-xl text-gray-600">
+            {t('create.subtitle')}
+          </p>
+        </div>
+
         {!generatedImage ? (
           /* 创作界面 */
           <LoadingOverlay isLoading={isGenerating}>
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-4">创造你的AI旅行体验</h1>
-                <p className="text-muted-foreground">
-                  上传一张图片，选择地理位置，让AI为你生成独特的旅行场景
-                </p>
-              </div>
 
               <div className="grid lg:grid-cols-2 gap-8">
                 {/* 左侧：图片上传 */}
                 <div className="space-y-6">
-                  <ImageUpload
-                    onImageSelect={handleImageSelect}
-                    selectedImage={selectedImage || undefined}
-                    onImageRemove={handleImageRemove}
-                  />
+                  <div>
+                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                      <Camera className="w-5 h-5" />
+                      {t('create.step1')}
+                    </h2>
+                    <ImageUpload
+                       onImageSelect={setSelectedImage}
+                       selectedImage={selectedImage || undefined}
+                     />
+                  </div>
                 </div>
 
-                {/* 右侧：地图选择 */}
+                {/* 右侧：地点选择 */}
                 <div className="space-y-6">
-                  <MapSelector
-                    onLocationSelect={handleLocationSelect}
-                    selectedLocation={selectedLocation || undefined}
-                  />
+                  <div>
+                    <h2 className="text-xl font-semibold mb-4">
+                      {t('create.step2')}
+                    </h2>
+                    <MapSelector
+                       onLocationSelect={setSelectedLocation}
+                       selectedLocation={selectedLocation || undefined}
+                     />
+                  </div>
                 </div>
               </div>
 
               {/* 错误信息 */}
               {error && (
-                <div className="mt-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <p className="text-sm text-destructive">{error}</p>
+                <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                  {error}
                 </div>
               )}
 
@@ -225,12 +242,19 @@ export default function CreatePage() {
                   onClick={handleGenerate}
                   disabled={!selectedImage || !selectedLocation || isGenerating}
                   size="lg"
-                  className="px-8"
+                  className="px-8 py-3 text-lg"
                 >
-                  <div className="flex items-center space-x-2">
-                    <Sparkles className="h-5 w-5" />
-                    <span>开始AI创作</span>
-                  </div>
+                  {isGenerating ? (
+                    <>
+                      <Loading className="mr-2" />
+                      {t('create.generating')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 w-5 h-5" />
+                      {t('create.startGenerate')}
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -239,34 +263,32 @@ export default function CreatePage() {
           /* 结果展示界面 */
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-4">你的AI旅行作品</h1>
+              <h1 className="text-3xl font-bold mb-4">{t('create.resultTitle')}</h1>
               <p className="text-muted-foreground">
-                基于 {generatedImage.location.name || generatedImage.location.address} 生成
+                {t('create.location')}: {generatedImage.location.name || generatedImage.location.address}
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid lg:grid-cols-2 gap-8 mb-8">
               {/* 原图 */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">原始图片</h3>
-                <div className="aspect-square bg-accent rounded-lg overflow-hidden">
-                  {generatedImage.originalImage && (
-                    <img
-                      src={generatedImage.originalImage}
-                      alt="原始图片"
-                      className="w-full h-full object-cover"
-                    />
-                  )}
+                <h3 className="text-lg font-semibold">{t('create.originalImage')}</h3>
+                <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  <img
+                    src={generatedImage.originalImage}
+                    alt={t('create.originalImage')}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
 
               {/* 生成图 */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">AI生成图片</h3>
-                <div className="aspect-square bg-accent rounded-lg overflow-hidden">
+                <h3 className="text-lg font-semibold">{t('create.generatedImage')}</h3>
+                <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                   <img
                     src={generatedImage.url}
-                    alt="AI生成图片"
+                    alt={t('create.generatedImage')}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -274,18 +296,29 @@ export default function CreatePage() {
             </div>
 
             {/* 操作按钮 */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={handleDownload} variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                下载图片
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={handleDownload}
+                size="lg"
+                className="px-8"
+              >
+                <Download className="mr-2 w-5 h-5" />
+                {t('create.downloadImage')}
               </Button>
-              <Button onClick={handleCreateNew}>
-                <Sparkles className="h-4 w-4 mr-2" />
-                创作新作品
+              <Button
+                onClick={() => {
+                  setGeneratedImage(null)
+                  setSelectedImage(null)
+                  setSelectedLocation(null)
+                  setError("")
+                }}
+                variant="outline"
+                size="lg"
+                className="px-8"
+              >
+                {t('create.createAgain')}
               </Button>
             </div>
-
-
           </div>
         )}
       </div>

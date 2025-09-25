@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { t } from "@/lib/i18n"
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -19,10 +20,10 @@ export function ConfirmDialog({
   isOpen,
   onClose,
   onConfirm,
-  title = "确认操作",
+  title = t('dialog.confirmAction'),
   message,
-  confirmText = "确定",
-  cancelText = "取消",
+  confirmText = t('dialog.confirm'),
+  cancelText = t('dialog.cancel'),
   variant = "default"
 }: ConfirmDialogProps) {
   // 处理ESC键关闭

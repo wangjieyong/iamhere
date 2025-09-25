@@ -2,13 +2,16 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { AppError, ErrorCode, createErrorResponse, logError } from '@/lib/error-handler';
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: '未授权' }, { status: 401 });
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'Unauthorized access', 401)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 401 })
     }
 
     // 获取用户的账户信息，包含provider
@@ -18,7 +21,9 @@ export async function GET() {
     });
 
     if (!account) {
-      return NextResponse.json({ error: '未找到账户信息' }, { status: 404 });
+      const error = new AppError(ErrorCode.UNAUTHORIZED, 'Account not found', 404)
+      const errorResponse = createErrorResponse(error, 'zh')
+      return NextResponse.json(errorResponse, { status: 404 })
     }
 
     return NextResponse.json({
@@ -27,9 +32,10 @@ export async function GET() {
 
   } catch (error: unknown) {
     console.error('获取用户provider失败:', error);
-    return NextResponse.json(
-      { error: '服务器错误' },
-      { status: 500 }
-    );
+    logError(error as Error, { endpoint: '/api/user/provider' })
+    
+    const serverError = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, 'Server error', 500)
+    const errorResponse = createErrorResponse(serverError, 'zh')
+    return NextResponse.json(errorResponse, { status: 500 })
   }
 }

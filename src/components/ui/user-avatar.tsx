@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react"
 import { User, LogOut, Settings } from "lucide-react"
 import { Button } from "./button"
 import Link from "next/link"
+import { t } from "@/lib/i18n"
 
 export function UserAvatar() {
   const { data: session } = useSession()
@@ -28,7 +29,7 @@ export function UserAvatar() {
     return (
       <Link href="/auth/signin">
         <Button variant="outline" size="sm">
-          登录
+          {t('ui.login')}
         </Button>
       </Link>
     )
@@ -56,7 +57,7 @@ export function UserAvatar() {
           </div>
         )}
         <span className="text-sm font-medium hidden sm:block">
-          {session.user.name || "用户"}
+          {session.user.name || t('ui.user')}
         </span>
       </button>
 
@@ -77,7 +78,7 @@ export function UserAvatar() {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
-                  {session.user.name || "用户"}
+                  {session.user.name || t('ui.user')}
                 </p>
                 {session.user.email && (
                   <p className="text-xs text-muted-foreground truncate">
@@ -95,7 +96,7 @@ export function UserAvatar() {
               onClick={() => setIsOpen(false)}
             >
               <User className="w-4 h-4" />
-              <span>我的图库</span>
+              <span>{t('ui.myGallery')}</span>
             </Link>
             
             <Link
@@ -104,7 +105,7 @@ export function UserAvatar() {
               onClick={() => setIsOpen(false)}
             >
               <Settings className="w-4 h-4" />
-              <span>账户设置</span>
+              <span>{t('ui.accountSettings')}</span>
             </Link>
             
             <button
@@ -112,7 +113,7 @@ export function UserAvatar() {
               className="flex items-center space-x-3 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors w-full text-left"
             >
               <LogOut className="w-4 h-4" />
-              <span>退出登录</span>
+              <span>{t('ui.logout')}</span>
             </button>
           </div>
         </div>
