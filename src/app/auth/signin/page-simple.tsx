@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Camera } from "lucide-react"
 import Link from "next/link"
 
-export default function SignIn() {
+export default function SignInSimple() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isTwitterLoading, setIsTwitterLoading] = useState(false)
