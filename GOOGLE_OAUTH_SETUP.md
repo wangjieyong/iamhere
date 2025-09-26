@@ -21,7 +21,7 @@
 2. 点击 "Create Credentials" > "OAuth 2.0 Client IDs"
 3. 选择应用类型为 "Web application"
 4. 配置授权重定向URI：
-   - 开发环境：`http://localhost:3001/api/auth/callback/google`
+   - 开发环境：`http://localhost:3000/api/auth/callback/google`
    - 生产环境：`https://yourdomain.com/api/auth/callback/google`
 
 ### 4. 更新环境变量

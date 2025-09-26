@@ -65,7 +65,7 @@ describe('Auth Configuration', () => {
 
         expect(result).toEqual({
           ...mockToken,
-          userId: 'user123',
+          id: 'user123',
         })
       }
     })
@@ -78,7 +78,7 @@ describe('Auth Configuration', () => {
           user: { email: 'test@example.com' },
           expires: '2024-01-01',
         }
-        const mockToken = { userId: 'user123' }
+        const mockToken = { id: 'user123' }
         
         const result = await authOptions.callbacks.session({
           session: mockSession,

@@ -12,8 +12,14 @@ const customJestConfig = {
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
   // Transform all node_modules except specific ones
   transformIgnorePatterns: [
-    'node_modules/(?!(@auth|next-auth|@next-auth|jose|openid-client)/)',
+    'node_modules/(?!(@auth|next-auth|@next-auth|jose|openid-client|oauth4webapi)/)',
   ],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
   // Mock problematic modules
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
