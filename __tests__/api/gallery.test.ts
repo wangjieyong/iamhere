@@ -48,7 +48,7 @@ describe('/api/gallery', () => {
       mockGetServerSession.mockResolvedValue(mockSession)
       mockPrismaFindMany.mockResolvedValue(mockGenerations)
 
-      const request = new NextRequest('http://localhost:3000/api/gallery')
+      const request = new NextRequest('http://127.0.0.1:3000/api/gallery')
       const response = await GET(request)
       const data = await response.json()
 
@@ -64,7 +64,7 @@ describe('/api/gallery', () => {
     it('should return 401 when user is not authenticated', async () => {
       mockGetServerSession.mockResolvedValue(null)
 
-      const request = new NextRequest('http://localhost:3000/api/gallery')
+      const request = new NextRequest('http://127.0.0.1:3000/api/gallery')
       const response = await GET(request)
       const data = await response.json()
 
@@ -81,7 +81,7 @@ describe('/api/gallery', () => {
       mockGetServerSession.mockResolvedValue(mockSession)
       mockPrismaFindMany.mockRejectedValue(new Error('Database error'))
 
-      const request = new NextRequest('http://localhost:3000/api/gallery')
+      const request = new NextRequest('http://127.0.0.1:3000/api/gallery')
       const response = await GET(request)
 
       expect(response.status).toBe(500)
@@ -95,7 +95,7 @@ describe('/api/gallery', () => {
       mockGetServerSession.mockResolvedValue(mockSession)
       mockPrismaFindMany.mockResolvedValue([])
 
-      const request = new NextRequest('http://localhost:3000/api/gallery')
+      const request = new NextRequest('http://127.0.0.1:3000/api/gallery')
       const response = await GET(request)
       const data = await response.json()
 

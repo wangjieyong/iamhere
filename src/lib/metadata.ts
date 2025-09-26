@@ -12,7 +12,7 @@ export function generateMetadata(): Metadata {
     creator: t('meta.author', locale),
     publisher: t('meta.author', locale),
     applicationName: t('meta.siteName', locale),
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:3000'),
     openGraph: {
       title: t('meta.title', locale),
       description: t('meta.description', locale),
