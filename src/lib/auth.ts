@@ -6,8 +6,8 @@ import { prisma } from "./prisma"
 
 // 只在开发环境使用代理配置
 if (process.env.NODE_ENV === 'development') {
-  // 全局代理配置
-  const proxyUrl = "http://127.0.0.1:1087"
+  // 全局代理配置 - 支持环境变量自定义
+  const proxyUrl = process.env.DEV_PROXY_URL || "http://127.0.0.1:1087"
   const httpsAgent = new HttpsProxyAgent(proxyUrl)
 
   // 设置全局代理 - 扩展到Twitter
