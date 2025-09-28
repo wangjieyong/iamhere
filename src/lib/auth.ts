@@ -32,6 +32,7 @@ if (process.env.NODE_ENV === 'development') {
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
+  trustHost: true, // 信任Vercel的主机配置
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
