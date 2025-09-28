@@ -102,15 +102,15 @@ export default function CreatePage() {
           throw new Error(t('create.dailyLimitReached'))
         } else if (response.status === 400) {
           const errorData = await response.json()
-          throw new Error(errorData.error || t('error.invalidImage'))
+          throw new Error(errorData.error?.message || errorData.error || t('error.invalidImage'))
         } else if (response.status === 503) {
           const errorData = await response.json()
-          throw new Error(errorData.error || t('error.serverError'))
+          throw new Error(errorData.error?.message || errorData.error || t('error.serverError'))
         } else {
           // 尝试获取服务器返回的具体错误信息
           try {
             const errorData = await response.json()
-            throw new Error(errorData.error || t('error.unknownError'))
+            throw new Error(errorData.error?.message || errorData.error || t('error.unknownError'))
           } catch {
             throw new Error(t('error.unknownError'))
           }

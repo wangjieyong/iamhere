@@ -59,3 +59,4 @@ temp-*.json
 debug-*.js
 debug-*.json
 *.debug
+prisma/dev.db

@@ -5,6 +5,31 @@ import { API_CONFIG } from './constants';
 const GEMINI_API_KEY = process.env.GOOGLE_AI_API_KEY;
 const MODEL_NAME = 'gemini-2.5-flash-image-preview';
 
+// 在开发环境中设置代理
+if (process.env.NODE_ENV === 'development' && typeof window === 'undefined') {
+  // 只在服务器端（Node.js）环境中设置代理
+  const proxyUrl = process.env.https_proxy || process.env.HTTPS_PROXY || process.env.http_proxy || process.env.HTTP_PROXY || 'http://127.0.0.1:1087';
+  
+  try {
+    const { HttpsProxyAgent } = require('https-proxy-agent');
+    const originalFetch = global.fetch;
+    
+    // 重写全局 fetch 以使用代理
+    global.fetch = async (url: string | URL | Request, options: any = {}) => {
+      if (typeof url === 'string' && url.includes('generativelanguage.googleapis.com')) {
+        const { default: fetch } = await import('node-fetch');
+        const agent = new HttpsProxyAgent(proxyUrl);
+        return fetch(url, { ...options, agent }) as any;
+      }
+      return originalFetch(url, options);
+    };
+    
+    console.log(`[Gemini] Development proxy configured: ${proxyUrl}`);
+  } catch (error) {
+    console.warn('[Gemini] Failed to configure proxy:', error);
+  }
+}
+
 // 初始化 Gemini 客户端
 let genAI: GoogleGenerativeAI | null = null;
 
