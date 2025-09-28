@@ -45,6 +45,18 @@ export const authOptions = {
   ],
   session: { strategy: "jwt" as const },
   callbacks: {
+    async signIn({ user, account, profile }: any) {
+      // 允许所有OAuth登录
+      return true
+    },
+    async redirect({ url, baseUrl }: any) {
+      // 如果url是相对路径，使用baseUrl
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // 如果url是同域名，允许重定向
+      else if (new URL(url).origin === baseUrl) return url
+      // 否则重定向到首页
+      return baseUrl
+    },
     async jwt({ token, user }: any) {
       if (user) token.id = user.id
       return token
