@@ -11,6 +11,7 @@
   "env": {
     "NODE_ENV": "production",
     "NEXTAUTH_URL": "https://iamhere.vercel.app",
+    "NEXTAUTH_SECRET": "your-production-secret-key-32-chars-minimum-length-required",
     "GOOGLE_CLIENT_ID": "1030933516225-5j4lre6ishcetgd993258v55spddovia.apps.googleusercontent.com",
     "GOOGLE_CLIENT_SECRET": "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",
     "TWITTER_CLIENT_ID": "T0RlRkNTbzJaeGpMY3NvRjh6WDk6MTpjaQ",
