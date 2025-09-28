@@ -1,50 +1,55 @@
-import { PrismaAdapter } from "@auth/prisma-adapter"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import GoogleProvider from "next-auth/providers/google"
 import TwitterProvider from "next-auth/providers/twitter"
+import { HttpsProxyAgent } from "https-proxy-agent"
 import { prisma } from "./prisma"
 
+// 全局代理配置
+const proxyUrl = "http://127.0.0.1:1087"
+const httpsAgent = new HttpsProxyAgent(proxyUrl)
+
+// 设置全局代理 - 扩展到Twitter
+const originalHttpsRequest = require('https').request
+require('https').request = function(options: any, callback: any) {
+  if (typeof options === 'string') {
+    options = new URL(options)
+  }
+  if (!options.agent && (
+    options.hostname?.includes('google') || 
+    options.host?.includes('google') ||
+    options.hostname?.includes('twitter') || 
+    options.host?.includes('twitter') ||
+    options.hostname?.includes('api.twitter.com') || 
+    options.host?.includes('api.twitter.com')
+  )) {
+    options.agent = httpsAgent
+  }
+  return originalHttpsRequest(options, callback)
+}
+
 export const authOptions = {
-  // 启用调试模式
-  debug: true,
-  
-  // 使用Prisma适配器
   adapter: PrismaAdapter(prisma),
-  
-  // 最简化提供商配置
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    
     TwitterProvider({
       clientId: process.env.TWITTER_CLIENT_ID!,
       clientSecret: process.env.TWITTER_CLIENT_SECRET!,
       version: "2.0",
     }),
   ],
-  
-  session: {
-    strategy: "jwt" as const,
-  },
-  
+  session: { strategy: "jwt" as const },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
+    async jwt({ token, user }: any) {
+      if (user) token.id = user.id
+      return token
     },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-      }
-      return session;
+    async session({ session, token }: any) {
+      if (token && session.user) session.user.id = token.id as string
+      return session
     },
   },
-  
-  pages: {
-    signIn: "/auth/signin",
-    error: "/auth/error",
-  },
+  pages: { signIn: "/auth/signin", error: "/auth/error" },
 }

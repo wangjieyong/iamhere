@@ -26,16 +26,10 @@ export default function SignIn() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      const result = await signIn("google", {
+      await signIn("google", {
         callbackUrl: "/create",
-        redirect: false,
+        redirect: true,
       })
-      
-      if (result?.ok) {
-        router.push("/create")
-      } else {
-        console.error("Sign in failed:", result?.error)
-      }
     } catch (error) {
       console.error("Sign in error:", error)
     } finally {
@@ -46,26 +40,16 @@ export default function SignIn() {
   const handleTwitterSignIn = async () => {
     setIsTwitterLoading(true)
     try {
-      const result = await signIn("twitter", {
+      await signIn("twitter", {
         callbackUrl: "/create",
-        redirect: false,
+        redirect: true,
       })
-      
-      if (result?.ok) {
-        router.push("/create")
-      } else {
-        console.error("Twitter sign in failed:", result?.error)
-      }
     } catch (error) {
       console.error("Twitter sign in error:", error)
     } finally {
       setIsTwitterLoading(false)
     }
   }
-
-
-
-
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -119,8 +103,6 @@ export default function SignIn() {
               </div>
             )}
           </Button>
-
-
 
           {/* Twitter Sign In */}
           <Button
