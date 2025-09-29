@@ -240,10 +240,10 @@ const translations: Translations = {
     'common.share': '分享',
     
     // 元数据
-    'meta.title': 'IAmHere - AI Travel Shot',
+    'meta.title': 'SnapHere - AI Travel Shot',
     'meta.description': '上传自拍，选择地点，AI瞬间生成专属旅行大片。免费体验AI带你环游世界的魅力。',
     'meta.keywords': 'AI旅行,照片生成,人工智能,旅行摄影,自拍,地点,免费',
-    'meta.author': 'IAmHere',
+    'meta.author': 'SnapHere',
     'meta.siteName': '此刻，身在四方'
   },
   en: {
@@ -478,10 +478,10 @@ const translations: Translations = {
     'language.english': 'English',
     
     // Metadata
-    'meta.title': 'IAmHere - AI Travel Shot',
+    'meta.title': 'SnapHere - AI Travel Shot',
     'meta.description': 'One snap. AI does the rest. Choose a location, and AI instantly generates your exclusive travel photos. Experience the magic of AI taking you around the world for free.',
     'meta.keywords': 'AI travel,photo generation,artificial intelligence,travel photography,selfie,location,free',
-    'meta.author': 'IAmHere',
+    'meta.author': 'SnapHere',
     'meta.siteName': 'Anywhere, Everywhere'
   }
 };

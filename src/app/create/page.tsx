@@ -145,7 +145,7 @@ export default function CreatePage() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = `iamhere-${generatedImage.location.name}-${Date.now()}.jpg`
+      a.download = `snaphere-${generatedImage.location.name}-${Date.now()}.jpg`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -244,17 +244,8 @@ export default function CreatePage() {
                   size="lg"
                   className="px-8 py-3 text-lg"
                 >
-                  {isGenerating ? (
-                    <>
-                      <Loading className="mr-2" />
-                      {t('create.generating')}
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 w-5 h-5" />
-                      {t('create.startGenerate')}
-                    </>
-                  )}
+                  <Sparkles className="mr-2 w-5 h-5" />
+                  {isGenerating ? t('create.generating') : t('create.startGenerate')}
                 </Button>
               </div>
             </div>

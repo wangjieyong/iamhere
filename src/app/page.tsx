@@ -36,7 +36,7 @@ export default function Home() {
           <nav className="flex items-center justify-between w-full">
             <div className="flex items-center space-x-2">
               <Camera className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">IAmHere</span>
+              <span className="text-xl font-bold">SnapHere</span>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/create" className="text-sm font-medium hover:text-primary transition-colors">
@@ -171,10 +171,10 @@ export default function Home() {
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Camera className="h-5 w-5 text-primary" />
-            <span className="font-semibold">IAmHere</span>
+            <span className="font-semibold">SnapHere</span>
           </div>
-          <p className="text-muted-foreground text-sm">
-            © 2025 IAmHere. All rights reserved.
+          <p className="text-sm text-muted-foreground">
+            © 2025 SnapHere. All rights reserved.
           </p>
         </div>
       </footer>

@@ -59,7 +59,7 @@ npm install @types/react-email --save-dev
 RESEND_API_KEY="re_xxxxxxxxxx"
 
 # 发件人邮箱 (需要验证域名)
-FROM_EMAIL="noreply@iamhere.app"
+FROM_EMAIL="noreply@snaphere.app"
 ```
 
 ### 3. 创建邮件服务
@@ -79,7 +79,7 @@ export interface EmailOptions {
 }
 
 export class EmailService {
-  private fromEmail = process.env.FROM_EMAIL || 'noreply@iamhere.app'
+  private fromEmail = process.env.FROM_EMAIL || 'noreply@snaphere.app'
 
   async sendEmail(options: EmailOptions) {
     try {
@@ -103,7 +103,7 @@ export class EmailService {
   async sendWelcomeEmail(userEmail: string, userName: string) {
     return this.sendEmail({
       to: userEmail,
-      subject: '欢迎来到 IAmHere! 🎉',
+      subject: '欢迎来到 SnapHere! 🎉',
       html: this.getWelcomeEmailTemplate(userName),
     })
   }
@@ -114,7 +114,7 @@ export class EmailService {
     
     return this.sendEmail({
       to: userEmail,
-      subject: '重置您的 IAmHere 密码',
+      subject: '重置您的 SnapHere 密码',
       html: this.getPasswordResetTemplate(resetUrl),
     })
   }
@@ -135,17 +135,17 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>欢迎来到 IAmHere</title>
+          <title>欢迎来到 SnapHere</title>
         </head>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;">
-            <h1 style="color: white; margin: 0;">欢迎来到 IAmHere! 🎉</h1>
+            <h1 style="color: white; margin: 0;">欢迎来到 SnapHere! 🎉</h1>
           </div>
           
           <div style="padding: 40px;">
             <h2>你好 ${userName}!</h2>
             
-            <p>感谢您加入 IAmHere! 现在您可以：</p>
+            <p>感谢您加入 SnapHere! 现在您可以：</p>
             
             <ul>
               <li>📸 上传您的自拍照片</li>
@@ -163,12 +163,12 @@ export class EmailService {
             
             <p>如果您有任何问题，请随时联系我们的支持团队。</p>
             
-            <p>祝您使用愉快！<br>IAmHere 团队</p>
+            <p>祝您使用愉快！<br>SnapHere 团队</p>
           </div>
           
           <div style="background: #f8f9fa; padding: 20px; text-align: center; color: #666;">
             <p style="margin: 0; font-size: 14px;">
-              © 2024 IAmHere. All rights reserved.
+              © 2024 SnapHere. All rights reserved.
             </p>
           </div>
         </body>
@@ -183,13 +183,13 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>重置密码 - IAmHere</title>
+          <title>重置密码 - SnapHere</title>
         </head>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="padding: 40px;">
             <h2>重置您的密码</h2>
             
-            <p>您请求重置 IAmHere 账户的密码。</p>
+            <p>您请求重置 SnapHere 账户的密码。</p>
             
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetUrl}" 
@@ -219,7 +219,7 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>AI照片生成完成 - IAmHere</title>
+          <title>AI照片生成完成 - SnapHere</title>
         </head>
         <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="padding: 40px;">

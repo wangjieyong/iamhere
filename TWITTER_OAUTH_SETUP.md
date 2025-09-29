@@ -28,7 +28,7 @@
    - 登录 Twitter Developer Portal
    - 点击 "Create an app"
    - 填写应用信息：
-     - App name: `IAmHere Travel App`
+     - App name: `SnapHere Travel App`
      - Description: `AI-powered travel companion app`
      - Website URL: `http://localhost:3000` (开发环境) 或您的生产域名
      - Use case: `Making it easier for people to access my app`

@@ -76,7 +76,7 @@ export default function GalleryPage() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = `iamhere-${image.id}.jpg`
+      a.download = `snaphere-${image.id}.jpg`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)

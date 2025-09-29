@@ -3,7 +3,7 @@
 /**
  * Twitter OAuth Configuration Verification Script
  * 
- * This script verifies that Twitter OAuth is properly configured for the IAmHere application.
+ * This script verifies that Twitter OAuth is properly configured for the SnapHere application.
  * It checks environment variables, NextAuth configuration, and UI implementation.
  */
 

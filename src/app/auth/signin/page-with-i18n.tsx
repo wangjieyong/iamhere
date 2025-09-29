@@ -58,7 +58,7 @@ export default function SignIn() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-2 mb-6">
             <Camera className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">IAmHere</span>
+            <span className="text-2xl font-bold">SnapHere</span>
           </Link>
           <h1 className="text-2xl font-semibold mb-2">{t('auth.welcomeBack')}</h1>
           <p className="text-muted-foreground">

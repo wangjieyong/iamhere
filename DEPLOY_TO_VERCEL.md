@@ -184,7 +184,7 @@ DATABASE_URL="your-production-database-url" npx prisma migrate deploy
 
 ## 🎉 完成！
 
-恭喜！你的 IAmHere 应用现在已经部署到生产环境。你可以：
+恭喜！你的 SnapHere 应用现在已经部署到生产环境。你可以：
 
 1. 分享你的应用链接
 2. 监控应用性能和使用情况

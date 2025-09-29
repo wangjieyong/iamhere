@@ -46,7 +46,7 @@ function AuthErrorContent() {
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center space-x-2 mb-6">
             <Camera className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">IAmHere</span>
+            <span className="text-2xl font-bold">SnapHere</span>
           </Link>
           
           <div className="flex justify-center mb-4">
@@ -100,7 +100,7 @@ export default function AuthError() {
           <div className="mb-8">
             <Link href="/" className="inline-flex items-center space-x-2 mb-6">
               <Camera className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold">IAmHere</span>
+              <span className="text-2xl font-bold">SnapHere</span>
             </Link>
             <div className="flex justify-center mb-4">
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />

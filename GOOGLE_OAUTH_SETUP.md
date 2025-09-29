@@ -121,7 +121,7 @@ npm run build && npm start
 - [ ] 环境变量已在部署平台配置
 
 ## 符合PRD要求
-根据IAmHere PRD文档：
+根据SnapHere PRD文档：
 - ✅ 支持Google社交登录
 - ✅ 极致简约的登录页面设计
 - ✅ 安全的用户认证机制
