@@ -4,7 +4,7 @@
 本项目是一个基于Next.js的全栈应用，支持Google和Twitter OAuth登录。
 
 ## 部署平台
-推荐使用Vercel进行部署，详细步骤请参考 `DEPLOY_TO_VERCEL.md`。
+推荐使用Vercel进行部署，详细步骤请参考 `docs/deployment/DEPLOY_TO_VERCEL.md`。
 
 ## 环境变量
 部署前请确保配置以下环境变量：
@@ -27,8 +27,8 @@ node scripts/pre-deploy-check.js
 ```
 
 ## OAuth配置
-- Google OAuth: 参考 `GOOGLE_OAUTH_SETUP.md`
-- Twitter OAuth: 参考 `TWITTER_OAUTH_SETUP.md`
+- Google OAuth: 参考 `docs/oauth/GOOGLE_OAUTH_SETUP.md`
+- Twitter OAuth: 参考 `docs/oauth/TWITTER_OAUTH_SETUP.md`
 
 ## 数据库
 使用Prisma进行数据库管理，部署前确保运行迁移：

@@ -135,11 +135,11 @@ if (allEnvConfigured && authConfigured && uiImplemented) {
   if (!uiImplemented) {
     console.log('   - Sign-in page needs Twitter login implementation');
   }
-  console.log('\n📖 Please refer to TWITTER_OAUTH_SETUP.md for detailed setup instructions');
+  console.log('\n📖 Please refer to docs/oauth/TWITTER_OAUTH_SETUP.md for detailed setup instructions');
 }
 
 console.log('\n🔗 Useful Links:');
-console.log('- Twitter Developer Portal: https://developer.twitter.com/');
+console.log('- Twitter Developer Portal: https://developer.twitter.com/en/portal/dashboard');
 console.log('- NextAuth.js Twitter Provider: https://next-auth.js.org/providers/twitter');
-console.log('- Setup Guide: ./TWITTER_OAUTH_SETUP.md');
+console.log('- Setup Guide: ./docs/oauth/TWITTER_OAUTH_SETUP.md');
 console.log('- Twitter API Documentation: https://developer.twitter.com/en/docs');
