@@ -4,7 +4,7 @@
 本项目是一个基于Next.js的全栈应用，支持Google和Twitter OAuth登录，以及邮箱魔法链接登录。
 
 ## 部署平台
-推荐使用Vercel进行部署，详细步骤请参考 `docs/deployment/DEPLOY_TO_VERCEL.md`。
+推荐使用Vercel进行部署，详细步骤请参考 `DEPLOY_TO_VERCEL.md`。
 
 ## 环境变量
 部署前请确保配置以下环境变量：
@@ -29,8 +29,8 @@ node scripts/pre-deploy-check.js
 ```
 
 ## OAuth配置
-- Google OAuth: 参考 `docs/oauth/GOOGLE_OAUTH_SETUP.md`
-- Twitter OAuth: 参考 `docs/oauth/TWITTER_OAUTH_SETUP.md`
+- Google OAuth: 参考 `../oauth/GOOGLE_OAUTH_SETUP.md`
+- Twitter OAuth: 参考 `../oauth/TWITTER_OAUTH_SETUP.md`
 
 ## 邮件服务配置
 项目使用Resend作为邮件服务提供商，用于发送魔法链接登录邮件。
@@ -45,7 +45,7 @@ node scripts/pre-deploy-check.js
 ### 注意事项
 - 如果不配置邮件服务，魔法链接登录功能将不可用
 - 建议在生产环境中使用已验证的域名作为发件人地址
-- 详细配置指南请参考 `docs/services/EMAIL_SERVICE_GUIDE.md`
+- 详细配置指南请参考 `../services/EMAIL_SERVICE_GUIDE.md`
 
 ## 数据库
 使用Prisma进行数据库管理，部署前确保运行迁移：
@@ -54,11 +54,11 @@ npx prisma migrate deploy
 ```
 
 ## 域名迁移
-如需进行域名迁移，请参考 `docs/deployment/DOMAIN_MIGRATION_GUIDE.md`。
+如需进行域名迁移，请参考 `DOMAIN_MIGRATION_GUIDE.md`。
 
 ## 相关文档
-- [Vercel部署详细步骤](docs/deployment/DEPLOY_TO_VERCEL.md)
-- [域名迁移指南](docs/deployment/DOMAIN_MIGRATION_GUIDE.md)
-- [Google OAuth配置](docs/oauth/GOOGLE_OAUTH_SETUP.md)
-- [Twitter OAuth配置](docs/oauth/TWITTER_OAUTH_SETUP.md)
-- [邮件服务配置](docs/services/EMAIL_SERVICE_GUIDE.md)
+- [Vercel部署详细步骤](DEPLOY_TO_VERCEL.md)
+- [域名迁移指南](DOMAIN_MIGRATION_GUIDE.md)
+- [Google OAuth配置](../oauth/GOOGLE_OAUTH_SETUP.md)
+- [Twitter OAuth配置](../oauth/TWITTER_OAUTH_SETUP.md)
+- [邮件服务配置](../services/EMAIL_SERVICE_GUIDE.md)

@@ -49,6 +49,15 @@ npx prisma db push
 npm run dev
 ```
 
+## 📚 文档
+
+详细的配置和部署文档请参考：
+
+- **[部署指南](docs/deployment/DEPLOYMENT.md)** - 完整的部署配置说明
+- **[OAuth配置](docs/oauth/)** - Google和Twitter登录配置
+- **[服务配置](docs/services/)** - 第三方服务配置指南
+- **[文档目录](docs/)** - 所有技术文档的入口
+
 访问 [http://localhost:3000](http://localhost:3000) 查看应用。
 
 ## 🔧 环境变量配置

@@ -4,7 +4,7 @@ import { signIn, getSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Camera } from "lucide-react"
+import { Camera, Mail } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/hooks/use-translation"
 
@@ -12,6 +12,9 @@ export default function SignIn() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isTwitterLoading, setIsTwitterLoading] = useState(false)
+  const [isEmailLoading, setIsEmailLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -51,6 +54,30 @@ export default function SignIn() {
     }
   }
 
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email.trim()) return
+
+    setIsEmailLoading(true)
+    try {
+      const result = await signIn("email", {
+        email: email.trim(),
+        callbackUrl: "/create",
+        redirect: false,
+      })
+      
+      if (result?.ok) {
+        setEmailSent(true)
+      } else {
+        console.error("Email sign in error:", result?.error)
+      }
+    } catch (error) {
+      console.error("Email sign in error:", error)
+    } finally {
+      setIsEmailLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8 bg-white rounded-xl shadow-lg p-8">
@@ -67,7 +94,7 @@ export default function SignIn() {
           </p>
         </div>
 
-        {/* Sign In Buttons */}
+        {/* OAuth Sign In Buttons */}
         <div className="space-y-4">
           {/* Google Sign In */}
           <Button
@@ -126,6 +153,80 @@ export default function SignIn() {
             )}
           </Button>
         </div>
+
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">{t('auth.orContinueWith')}</span>
+          </div>
+        </div>
+
+        {/* Email Sign In Form */}
+        {!emailSent ? (
+          <form onSubmit={handleEmailSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                {t('auth.signInWithEmail')}
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('auth.emailPlaceholder')}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                  disabled={isEmailLoading}
+                />
+              </div>
+            </div>
+            <Button
+              type="submit"
+              disabled={isEmailLoading || !email.trim()}
+              className="w-full h-12 text-base bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
+            >
+              {isEmailLoading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <span>{t('auth.sendingMagicLink')}</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Mail className="w-5 h-5 text-gray-500" />
+                  <span>{t('auth.sendMagicLink')}</span>
+                </div>
+              )}
+            </Button>
+          </form>
+        ) : (
+          <div className="text-center space-y-4 p-6 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex justify-center">
+              <div className="bg-green-100 p-3 rounded-full">
+                <Mail className="w-8 h-8 text-green-600" />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-green-800">{t('auth.magicLinkSent')}</h3>
+              <p className="text-sm text-green-600 mt-1">{t('auth.magicLinkSentDesc')}</p>
+              <p className="text-sm text-gray-600 mt-2">{email}</p>
+            </div>
+            <Button
+              onClick={() => {
+                setEmailSent(false)
+                setEmail('')
+              }}
+              variant="outline"
+              className="text-sm"
+            >
+              {t('auth.resendLink')}
+            </Button>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-muted-foreground">

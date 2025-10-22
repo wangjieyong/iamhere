@@ -1,8 +1,10 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import GoogleProvider from "next-auth/providers/google"
 import TwitterProvider from "next-auth/providers/twitter"
+import EmailProvider from "next-auth/providers/email"
 import { HttpsProxyAgent } from "https-proxy-agent"
 import { prisma } from "./prisma"
+import { emailService } from "./email"
 
 // 只在开发环境使用代理配置
 if (process.env.NODE_ENV === 'development') {
@@ -43,12 +45,46 @@ export const authOptions = {
       clientSecret: process.env.TWITTER_CLIENT_SECRET!,
       version: "2.0",
     }),
+    EmailProvider({
+      server: "", // 不使用 SMTP，使用自定义发送函数
+      from: process.env.EMAIL_FROM || "noreply@snaphere.app",
+      sendVerificationRequest: async ({ identifier: email, url, provider }) => {
+        try {
+          // 检测用户语言偏好（可以从数据库或请求头获取）
+          // 这里暂时使用默认英文，后续可以根据用户设置调整
+          const locale = 'en'; // TODO: 从用户设置或请求头获取语言偏好
+          
+          const result = await emailService.sendMagicLinkEmail({
+            to: email,
+            url,
+            locale
+          });
+
+          if (!result.success) {
+            console.error('Failed to send magic link email:', result.error);
+            throw new Error(`Failed to send email: ${result.error}`);
+          }
+
+          console.log('Magic link email sent successfully:', result.messageId);
+        } catch (error) {
+          console.error('Error sending magic link email:', error);
+          throw error;
+        }
+      },
+    }),
   ],
   session: { strategy: "jwt" as const },
   callbacks: {
     async signIn({ user, account, profile }: any) {
-      // 允许所有OAuth登录
-      return true
+      // 允许所有登录方式
+      if (account?.provider === 'email') {
+        // 邮箱登录 - NextAuth 已经验证了邮件链接的有效性
+        console.log('Email sign in successful:', user.email);
+        return true;
+      }
+      
+      // OAuth 登录 (Google, Twitter)
+      return true;
     },
     async redirect({ url, baseUrl }: any) {
       // 如果url是相对路径，使用baseUrl
