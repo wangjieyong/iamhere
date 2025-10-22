@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
+  // 🚨 重要：跳过OAuth回调路径，避免干扰OAuth流程
+  if (request.nextUrl.pathname.startsWith('/api/auth/callback')) {
+    return NextResponse.next()
+  }
+
   // 仅在开发环境统一域名，避免影响生产环境
   const isDev = process.env.NODE_ENV !== 'production'
   if (!isDev) {
