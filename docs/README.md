@@ -5,7 +5,7 @@
 ## 📋 文档目录
 
 ### 🚀 部署相关
-- **[部署指南](deployment/DEPLOYMENT.md)** - 完整的部署配置说明
+- **[部署指南](../DEPLOYMENT.md)** - 完整的部署配置说明
 - **[Vercel部署](deployment/DEPLOY_TO_VERCEL.md)** - Vercel平台部署详细步骤
 - **[域名迁移](deployment/DOMAIN_MIGRATION_GUIDE.md)** - 域名迁移操作指南
 
