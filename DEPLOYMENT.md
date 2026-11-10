@@ -19,8 +19,12 @@
 - `TWITTER_CLIENT_SECRET` - Twitter OAuth客户端密钥
 - `GOOGLE_AI_API_KEY` - Google AI API密钥
 - `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN` - Mapbox访问令牌
-- `RESEND_API_KEY` - Resend邮件服务API密钥（用于魔法链接登录）
+
+### 可选变量（邮箱魔法链接登录）
+- `RESEND_API_KEY` - Resend邮件服务API密钥
 - `EMAIL_FROM` - 发件人邮箱地址
+
+> 未配置邮件服务时，应用仍可正常构建和启动，邮箱魔法链接登录不可用，Google/Twitter 登录不受影响。
 
 ## 部署前检查
 运行以下命令进行部署前检查：
