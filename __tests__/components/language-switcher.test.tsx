@@ -1,6 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
-import * as i18n from '@/lib/i18n';
 
 // Mock the i18n module
 jest.mock('@/lib/i18n', () => ({
@@ -20,13 +19,17 @@ describe('LanguageSwitcher', () => {
   const mockSetLocale = jest.fn();
   const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
 
+  const mockTranslations = (locale: 'en' | 'zh' = 'en') => ({
+    t: jest.fn((key: string) => key),
+    locale,
+    setLocale: mockSetLocale,
+    isHydrated: true,
+    isInitialized: true,
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseTranslation.mockReturnValue({
-      t: jest.fn((key) => key),
-      locale: 'en',
-      setLocale: mockSetLocale,
-    });
+    mockUseTranslation.mockReturnValue(mockTranslations('en'));
   });
 
   it('should render language switcher button', () => {
@@ -37,11 +40,7 @@ describe('LanguageSwitcher', () => {
   });
 
   it('should display "中文" when current locale is English', () => {
-    mockUseTranslation.mockReturnValue({
-      t: jest.fn((key) => key),
-      locale: 'en',
-      setLocale: mockSetLocale,
-    });
+    mockUseTranslation.mockReturnValue(mockTranslations('en'));
 
     render(<LanguageSwitcher />);
     
@@ -49,11 +48,7 @@ describe('LanguageSwitcher', () => {
   });
 
   it('should display "EN" when current locale is Chinese', () => {
-    mockUseTranslation.mockReturnValue({
-      t: jest.fn((key) => key),
-      locale: 'zh',
-      setLocale: mockSetLocale,
-    });
+    mockUseTranslation.mockReturnValue(mockTranslations('zh'));
 
     render(<LanguageSwitcher />);
     
@@ -61,11 +56,7 @@ describe('LanguageSwitcher', () => {
   });
 
   it('should call setLocale with "zh" when clicked and current locale is "en"', () => {
-    mockUseTranslation.mockReturnValue({
-      t: jest.fn((key) => key),
-      locale: 'en',
-      setLocale: mockSetLocale,
-    });
+    mockUseTranslation.mockReturnValue(mockTranslations('en'));
 
     render(<LanguageSwitcher />);
     
@@ -76,11 +67,7 @@ describe('LanguageSwitcher', () => {
   });
 
   it('should call setLocale with "en" when clicked and current locale is "zh"', () => {
-    mockUseTranslation.mockReturnValue({
-      t: jest.fn((key) => key),
-      locale: 'zh',
-      setLocale: mockSetLocale,
-    });
+    mockUseTranslation.mockReturnValue(mockTranslations('zh'));
 
     render(<LanguageSwitcher />);
     
@@ -95,11 +82,13 @@ describe('LanguageSwitcher', () => {
     
     mockUseTranslation.mockImplementation(() => ({
       t: jest.fn((key) => key),
-      locale: currentLocale as any,
+      locale: currentLocale as 'en' | 'zh',
       setLocale: (newLocale: string) => {
         currentLocale = newLocale;
         mockSetLocale(newLocale);
       },
+      isHydrated: true,
+      isInitialized: true,
     }));
 
     const { rerender } = render(<LanguageSwitcher />);
@@ -114,11 +103,7 @@ describe('LanguageSwitcher', () => {
     expect(mockSetLocale).toHaveBeenCalledWith('zh');
     
     // Update the mock to reflect the new locale
-    mockUseTranslation.mockReturnValue({
-      t: jest.fn((key) => key),
-      locale: 'zh',
-      setLocale: mockSetLocale,
-    });
+    mockUseTranslation.mockReturnValue(mockTranslations('zh'));
     
     rerender(<LanguageSwitcher />);
     

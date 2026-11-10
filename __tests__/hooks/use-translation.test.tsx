@@ -18,7 +18,6 @@ Object.defineProperty(document, 'cookie', {
 
 describe('useTranslation', () => {
   const mockGetLocale = i18n.getLocale as jest.MockedFunction<typeof i18n.getLocale>;
-  const mockSetCookie = i18n.setCookie as jest.MockedFunction<typeof i18n.setCookie>;
   const mockSetLocale = i18n.setLocale as jest.MockedFunction<typeof i18n.setLocale>;
   const mockT = i18n.t as jest.MockedFunction<typeof i18n.t>;
 
@@ -41,16 +40,15 @@ describe('useTranslation', () => {
     
     const { result } = renderHook(() => useTranslation());
     
-    // Initially should be 'en' before hydration
-    expect(result.current.locale).toBe('en');
-    
-    // Wait for useEffect and setTimeout to complete
+    // useEffect runs during renderHook, so the hook may already be hydrated.
+    // Wait for the hydration effect to settle before checking the loaded locale.
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 10));
     });
     
     // After hydration should be 'zh'
     expect(result.current.locale).toBe('zh');
+    expect(result.current.isHydrated).toBe(true);
     expect(mockGetLocale).toHaveBeenCalled();
   });
 
