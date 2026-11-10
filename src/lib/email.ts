@@ -1,7 +1,22 @@
 import { Resend } from 'resend';
 
-// 初始化 Resend 客户端
-const resend = new Resend(process.env.RESEND_API_KEY);
+// 延迟初始化 Resend 客户端。
+// 邮件服务是可选配置：未设置 RESEND_API_KEY 时应用仍应能构建和启动，
+// 只有实际发送邮件时才会返回明确的配置错误。
+let resend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+
+  if (!resend) {
+    resend = new Resend(apiKey);
+  }
+
+  return resend;
+}
 
 export interface EmailOptions {
   to: string;
@@ -31,11 +46,14 @@ export class EmailService {
    */
   async sendEmail(options: EmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
-      if (!process.env.RESEND_API_KEY) {
-        throw new Error('RESEND_API_KEY is not configured');
+      const client = getResendClient();
+      if (!client) {
+        const message = 'RESEND_API_KEY is not configured';
+        console.error('Email service error:', message);
+        return { success: false, error: message };
       }
 
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await client.emails.send({
         from: options.from || this.fromEmail,
         to: [options.to],
         subject: options.subject,

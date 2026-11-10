@@ -26,6 +26,14 @@ global.Response = class Response {
     this.status = options.status || 200
     this.headers = new Map(Object.entries(options.headers || {}))
   }
+
+  async json() {
+    return typeof this.body === 'string' ? JSON.parse(this.body) : this.body
+  }
+
+  async text() {
+    return typeof this.body === 'string' ? this.body : JSON.stringify(this.body)
+  }
   
   static json(data, options = {}) {
     return new Response(JSON.stringify(data), {
